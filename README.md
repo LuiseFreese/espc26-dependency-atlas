@@ -4,8 +4,6 @@ A Power Apps **Code App** (React + TypeScript + Vite + React Flow) on **Datavers
 dependency graph, simulates the outage of any asset ("what breaks if this goes down?") and lets you fix the data live
 (assign a business owner, add a dependency).
 
-![Dependency Atlas](docs/screenshot-simulation.png)
-
 ## Environment & identifiers
 
 | Item | Value |
