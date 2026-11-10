@@ -65,7 +65,7 @@ Eight things, in two groups: five about *what it does*, three ♥ about *how it 
 | **C1** | **Code apps** | Power Apps used to mean a browser designer and formulas. A *code app* is a normal React/TypeScript web app, written in VS Code, that Power Apps hosts and runs — same sign-in, same sharing, same data, same app list. | "Same tenant, same login, same governance — but it's *my* React." | Q1 |
 | **C2** | **Dataverse underneath** | Dataverse is the Power Platform's database. The two tables live there; the React app is just one way to look at them. On stage a *second*, zero-code model-driven app (**Dependency Atlas Admin**) shows the same rows — change the owner in React, refresh the grid, it's there. *This is the "data and platform" thesis made visible.* | "Same row, two apps, one commit. *That* is data and platform." | Q1, Q3 |
 | **C6** | **The graph** | A list says what you have. A graph — boxes and arrows — says what depends on what. Every arrow here means *A requires B*. Once dependencies are rows pointing at rows, "what breaks?" becomes a computation instead of a memory. | "A table tells you what you have. A graph tells you what hurts." | Q1, Q2 |
-| **C7** ↺ | **The computer walks the graph** | Start at the box that died, follow the arrows backwards, collect everything you reach, stop when you've seen it all. That's the whole simulation. The messy bits — two boxes needing each other, one box reachable two ways — are exactly what humans get wrong at 3 a.m. and computers get right every time. | "You know what Identity API *does*. Nobody can hold fifty arrows in their head. Let the computer walk — the human decides what to do with the answer." | Q2 |
+| **C7** ↺ | **The computer walks the graph** | Start at the box that died, follow the arrows backwards, collect everything you reach, stop when you've seen it all. That's the whole simulation. The messy bits — two systems needing each other, one system reachable two ways — are exactly what people get wrong under pressure and computers get right every time. | "Every team knows what *their* system needs. Nobody knows the whole chain. That's a memory problem — and computers don't have it. The app follows the chain; the people decide what to do." | Q2 |
 | **C9** | **Breaks immediately vs breaks because of that** | *Breaks immediately* = uses the dead thing itself. *Breaks because of that* = only breaks because something in between broke. The indirect people are the ones who find out last. | "The thing that breaks is rarely the thing you touched." | Q2 |
 
 ### ♥ Built the right way — the part that carries the empathy theme
@@ -110,11 +110,15 @@ Zoom gently into the top row (portals, mobile app). Point at a ⚠ *No business 
 
 ### 2:15 — **Q2 · "Okay — what can I ask it?"** → blast radius of Identity API (2:00) — C7, C9
 
-**Click:** search `Identity` → Enter → **💥 Show blast radius**. Let it breathe.
+**Say (before clicking):** "One question. *If this system goes down — what else stops working?* Let's take the Identity API. That's the login. Every system that needs people to sign in goes through it."
 
-**Say:** "**Show blast radius** — pretend single sign-on just died, show me what stops working. **Eight break immediately. One more breaks because of that. Nine systems.** Look at Shipping, the yellow one — Shipping doesn't even talk to Identity. It needs Inventory, Inventory needs Identity. Those are the people who find out last."
+**Click:** search `Identity` → Enter → **💥 Show blast radius**. Let it breathe for two seconds.
 
-**Say (C7):** "You know what Identity API does. Nobody can hold fifty arrows in their head — especially not at three in the morning. The computer walks the graph: backwards along the arrows, collects what it reaches, stops when it's seen everything. It even survives the ugly parts — two systems that need each other, one system reachable two ways. That's its job. *Ours* is this list —" point at **People to call** — "six people to call. And two systems where the answer is *nobody*."
+**Say (what they see):** "**Eight systems break immediately** — the customer portal, the mobile app, the partner portal, checkout, orders… all of them log people in through Identity. **One more breaks a step later: Shipping.** Shipping has nothing to do with login. But Shipping needs Inventory, and Inventory needs Identity. So Shipping is down too — and the Shipping team is the last to find out. **Nine systems, from one failure.**"
+
+**Say (why a computer — C7):** "Every team knows what *their* system needs. Nobody knows the whole chain — three, four hops deep, across teams. That's not a knowledge problem, it's a *memory* problem, and computers don't have it. The app follows the chain end to end, every time, in a blink."
+
+**Say (the human part — C9):** point at **People to call** — "And this is the part that stays human. Six names. The app knows *what* broke; these are the people who decide what to do about it. And look: two systems where the answer is *nobody*. That's not a technical problem. Hold that thought."
 
 **Click:** ↺ Clear.
 
@@ -196,7 +200,7 @@ Vesa's theme is that tools help but judgement and people stay. Every exchange la
 | Exchange | The tool does | The human does |
 | --- | --- | --- |
 | Q1 | Draws the estate | Recognises their own wiki diagram |
-| Q2 | Walks fifty arrows, survives cycles and diamonds | Reads *People to call*, picks up the phone |
+| Q2 | Follows the whole dependency chain, end to end | Reads *People to call*, picks up the phone |
 | Q3 | Persists to Dataverse; a second app shows it instantly | Decides who is accountable |
 | Q4 | Ranks unowned systems by blast radius in 90 s | Knows what the answer should look like; decides it matters |
 | Q5 | Resets, labels, governs | Chose to build it that way — for the next person, the back row, the admin |
