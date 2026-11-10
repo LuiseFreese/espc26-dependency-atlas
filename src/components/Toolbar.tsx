@@ -14,10 +14,13 @@ export interface ToolbarProps {
   simulating: boolean;
   onResetSimulation: () => void;
   reloading: boolean;
+  gapCount: number;
+  gapsOpen: boolean;
+  onToggleGaps: () => void;
 }
 
 export function Toolbar(props: ToolbarProps) {
-  const { assets, assetCount, dependencyCount, query, onQueryChange, onPick, onFit, onReload, simulating, onResetSimulation, reloading } = props;
+  const { assets, assetCount, dependencyCount, query, onQueryChange, onPick, onFit, onReload, simulating, onResetSimulation, reloading, gapCount, gapsOpen, onToggleGaps } = props;
   const [open, setOpen] = useState(false);
 
   const results = useMemo(() => {
@@ -85,6 +88,9 @@ export function Toolbar(props: ToolbarProps) {
       </div>
 
       <div className="toolbar-actions">
+        <button className={gapsOpen ? "active" : ""} onClick={onToggleGaps} aria-pressed={gapsOpen} title="Unowned assets ranked by dependents">
+          ⚠ Ownership gaps ({gapCount})
+        </button>
         {simulating && (
           <button className="danger" onClick={onResetSimulation}>
             ↺ Clear blast radius
