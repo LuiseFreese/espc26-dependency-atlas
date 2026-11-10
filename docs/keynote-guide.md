@@ -114,7 +114,7 @@ Zoom gently into the top row (portals, mobile app). Point at a ⚠ *No business 
 
 **Say:** "**Show blast radius** — pretend single sign-on just died, show me what stops working. **Eight break immediately. One more breaks because of that. Nine systems.** Look at Shipping, the yellow one — Shipping doesn't even talk to Identity. It needs Inventory, Inventory needs Identity. Those are the people who find out last."
 
-**Say (C7):** "You know what Identity API does. Nobody can hold fifty arrows in their head — especially not at three in the morning. The computer walks the graph: backwards along the arrows, collects what it reaches, stops when it's seen everything. It even survives the ugly parts — two systems that need each other, one system reachable two ways. That's its job. *Ours* is this list —" point at **People to call** — "seven people to call. And two systems where the answer is *nobody*."
+**Say (C7):** "You know what Identity API does. Nobody can hold fifty arrows in their head — especially not at three in the morning. The computer walks the graph: backwards along the arrows, collects what it reaches, stops when it's seen everything. It even survives the ugly parts — two systems that need each other, one system reachable two ways. That's its job. *Ours* is this list —" point at **People to call** — "six people to call. And two systems where the answer is *nobody*."
 
 **Click:** ↺ Clear.
 
@@ -216,7 +216,7 @@ Vesa's theme is that tools help but judgement and people stay. Every exchange la
 | Q | Action | Expected |
 | --- | --- | --- |
 | Q1 | load app | 32 assets · 50 dependencies |
-| Q2 | Identity API → Show blast radius | **8 / 1 / 9** · 7 owners + 2 nobody · Shipping API yellow |
+| Q2 | Identity API → Show blast radius | **8 / 1 / 9** · 6 owners + 2 nobody · Shipping API yellow |
 | Q3 | MDA grid (empty) → React: Admin Console → Grady Archie → MDA Refresh | green toast · grid row shows Grady Archie |
 | Q4 | paste prompt → Local Play → Ownership gaps | **#1 Maps Provider 7** · #2 Shipping API 6 · #3 ETL Pipeline 4 |
 | Q4 panic | `git checkout rehearsal/ownership-gaps` | same result |

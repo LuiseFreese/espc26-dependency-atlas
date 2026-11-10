@@ -1,0 +1,4 @@
+{
+  "_comment": "Only these users may appear as business owners (seed, reset fallback, and the owner picker in the app). Matched case-insensitively on the start of the user principal name.",
+  "allowedUpnPrefixes": ["AdeleV@", "AlexW@", "MeganB@", "DiegoS@", "JoniS@", "GradyA@", "luisefreese@"]
+}

@@ -10,15 +10,14 @@
 // - owner: null => "no business owner" (used by the live-coding enhancement).
 
 export const owners = {
-  // alias -> preferred user principal name prefix (matched case-insensitively against systemuser.domainname)
+  // alias -> user principal name prefix (matched case-insensitively against systemuser.domainname).
+  // Every prefix here MUST also be in config/demo-personas.json — only those people may ever appear as owners.
   adele: "AdeleV@",
   alex: "AlexW@",
   megan: "MeganB@",
   diego: "DiegoS@",
   joni: "JoniS@",
   grady: "GradyA@",
-  hugo: "hugo@",
-  carmen: "carmen@",
   luise: "luisefreese@",
 };
 
@@ -38,9 +37,9 @@ export const assets = [
   ["checkout-service", "Checkout Service", "API", "High", "diego", "Orchestrates cart, pricing, tax and payment."],
   ["orders-api", "Orders API", "API", "High", "joni", "Creates and tracks orders."],
   ["identity-api", "Identity API", "API", "High", "grady", "Single sign-on and token issuing for every channel."],
-  ["catalog-api", "Catalog API", "API", "Medium", "hugo", "Product data for all channels."],
+  ["catalog-api", "Catalog API", "API", "Medium", "alex", "Product data for all channels."],
   ["pricing-api", "Pricing API", "API", "Medium", null, "Calculates list and promotional prices."],
-  ["inventory-api", "Inventory API", "API", "High", "carmen", "Stock levels and reservations."],
+  ["inventory-api", "Inventory API", "API", "High", "joni", "Stock levels and reservations."],
   ["shipping-api", "Shipping API", "API", "Medium", null, "Delivery options and labels."],
   ["notification-service", "Notification Service", "API", "Low", "megan", "Sends e-mails and SMS to customers."],
   ["search-service", "Search Service", "API", "Medium", "alex", "Full-text product search."],
@@ -48,9 +47,9 @@ export const assets = [
   ["feature-flags", "Feature Flag Service", "API", "Medium", "grady", "Runtime feature toggles for the web channels."],
 
   ["orders-db", "Orders Database", "Database", "High", "joni", "System of record for orders."],
-  ["inventory-db", "Inventory Database", "Database", "High", "carmen", "Stock positions per warehouse."],
+  ["inventory-db", "Inventory Database", "Database", "High", "joni", "Stock positions per warehouse."],
   ["customer-db", "Customer Database", "Database", "High", "adele", "Customer master data and credentials."],
-  ["catalog-db", "Catalog Database", "Database", "Medium", "hugo", "Products, categories, media."],
+  ["catalog-db", "Catalog Database", "Database", "Medium", "alex", "Products, categories, media."],
   ["analytics-warehouse", "Analytics Warehouse", "Database", "Medium", null, "Star schema for reporting."],
   ["hr-db", "HR Database", "Database", "Medium", "megan", "Employee records."],
 

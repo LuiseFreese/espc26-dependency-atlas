@@ -4,22 +4,27 @@
 import { config, get, getAll, request, del, log } from "./dataverse.mjs";
 import { asset, dependency, ASSET_TYPE, CRITICALITY } from "./schema.mjs";
 import { assets, dependencies, owners } from "./seed-data.mjs";
+import personas from "../config/demo-personas.json" with { type: "json" };
 
 const p = config.prefix;
+const allowed = personas.allowedUpnPrefixes.map((x) => x.toLowerCase());
+const isAllowed = (upn) => allowed.some((prefix) => (upn ?? "").toLowerCase().startsWith(prefix));
 
 export async function resolveOwners() {
   const users = await getAll(
     `systemusers?$select=systemuserid,fullname,domainname&$filter=isdisabled eq false and applicationid eq null and accessmode eq 0&$orderby=fullname`,
   );
-  const eligible = users.filter((u) => u.domainname && u.fullname && !u.fullname.startsWith("#"));
-  if (!eligible.length) throw new Error("No eligible (enabled, interactive) users found to use as business owners.");
+  // Hard rule: only allow-listed demo personas can ever become business owners.
+  const eligible = users.filter((u) => u.domainname && u.fullname && isAllowed(u.domainname));
+  if (!eligible.length) throw new Error("None of the allow-listed demo personas (config/demo-personas.json) exist in this environment.");
 
   const resolved = {};
   let fallbackIndex = 0;
   for (const [alias, upnPrefix] of Object.entries(owners)) {
+    if (!isAllowed(upnPrefix)) throw new Error(`Owner alias '${alias}' (${upnPrefix}) is not in config/demo-personas.json`);
     let user = eligible.find((u) => u.domainname.toLowerCase().startsWith(upnPrefix.toLowerCase()));
     if (!user) {
-      // Deterministic fallback so the demo still works in a tenant without the preferred users.
+      // Deterministic fallback — still restricted to the allow-list.
       user = eligible[fallbackIndex++ % eligible.length];
       log(`Owner '${alias}' not found, using '${user.fullname}' instead`);
     }

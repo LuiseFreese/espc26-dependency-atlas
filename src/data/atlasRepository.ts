@@ -13,8 +13,16 @@ import type { Systemusers } from "../generated/models/SystemusersModel";
 import type { IGetAllOptions } from "../generated/models/CommonModels";
 import type { IOperationResult } from "@microsoft/power-apps/data";
 import type { Asset, AssetType, Criticality, Dependency, Owner } from "../types";
+import personas from "../../config/demo-personas.json";
 
 const PAGE_SIZE = 500;
+
+// Only allow-listed demo personas may be shown or assigned as business owners.
+const ALLOWED_UPN_PREFIXES = personas.allowedUpnPrefixes.map((x) => x.toLowerCase());
+export function isAllowedOwner(upn: string | undefined | null): boolean {
+  const value = (upn ?? "").toLowerCase();
+  return ALLOWED_UPN_PREFIXES.some((prefix) => value.startsWith(prefix));
+}
 
 export class DataverseError extends Error {
   readonly cause?: unknown;
@@ -110,7 +118,7 @@ export async function loadOwners(): Promise<Owner[]> {
     },
     "Loading users",
   );
-  return rows.filter((r) => r.fullname && !r.fullname.startsWith("#")).map(toOwner);
+  return rows.filter((r) => r.fullname && isAllowedOwner(r.domainname)).map(toOwner);
 }
 
 export async function loadAssets(owners: Map<string, Owner>): Promise<Asset[]> {

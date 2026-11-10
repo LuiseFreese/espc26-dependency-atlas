@@ -79,7 +79,7 @@ Scripts authenticate with `az account get-access-token --resource <Dataverse URL
 - **Independent**: Intranet Wiki (no edges), HR Portal → HR Database (separate island).
 - **Unowned** assets: Admin Console, Pricing API, Shipping API, Recommendation Engine, Analytics Warehouse,
   ETL Pipeline, SMS Gateway, Maps Provider, Intranet Wiki, Legacy CRM, CRM Sync Job.
-- Business owners are real, enabled users of the tenant (matched by UPN prefix, deterministic fallback otherwise).
+- Business owners are restricted to the demo personas listed in `config/demo-personas.json` (Adele Vance, Alex Wilber, Megan Bowen, Diego Siciliani, Joni Sherman, Grady Archie, Luise Freese). The seed, the reset fallback and the app's owner picker all enforce this allow-list — no other tenant user can appear as a business owner.
 
 Good things to simulate on stage: **Identity API** (wide direct blast radius) and **Customer Database**
 (4 direct, 12 indirect, including the cycle and the analytics chain).
