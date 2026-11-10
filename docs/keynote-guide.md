@@ -2,304 +2,170 @@
 
 *"The What-Could-Possibly-Go-Wrong Graph"*
 
-> Working title for the segment: **The future of low code is code (apps).**
+**Slot:** ESPC keynote, Thu 3 Dec 2026, 09:30–09:40, RAI Auditorium. Rehearsal Wed 17:45–18:45.
+**Format:** Vesa asks → Luise shows. Five short exchanges. Then sit down.
+**Keynote theme (Vesa):** the role of humans and empathy — tools help, human judgement and interaction stay.
+**Your angle:** *The future of low code is code (apps).* Every exchange ends on a human.
 
-This guide has three parts: (1) what the app lets you teach, (2) a click-by-click demo flow for 8–10 minutes,
-(3) the storyline that holds it together. Numbers below are the verified values for the seeded dataset after
-`npm run reset`.
+All numbers are the verified values after `npm run reset`.
 
 ---
 
-## 1. What you can teach with this app
+## 1. What you teach — on stage
 
-### Concepts
+Six things. Nothing else gets said on stage. IDs are stable (see backstage list for the rest).
 
-Referenced throughout as **C1–C14**. IDs are stable; C8 stays listed so references don't shift, but is skipped on stage.
-The *Explain it* column is written for someone who has only briefly met Power Platform and has never heard of code apps.
-
-| # | Concept | Explain it (for a Power Platform newcomer) | Where it shows up | One-liner for stage |
+| # | Concept | Explain it (newcomer) | Stage line | Where |
 | --- | --- | --- | --- | --- |
-| **C1** ★ | **Code apps = pro-code UI on the Power Platform runtime** | Classic Power Apps are built in a browser designer with Power Fx formulas. A *code app* is a normal web app — React, TypeScript, any npm package — written in VS Code. Power Apps then *hosts* it: same sign-in, same sharing dialog, same data connections, same app list. The platform is the runtime; you bring the user interface. | React/Vite/TypeScript app, hosted by the Power Apps player, authenticated by the platform | "Same tenant, same auth, same governance — but it's *my* React. No formula bar was harmed." |
-| **C2** ★ | **Dataverse as the system of record, not the UI** | Dataverse is the Power Platform's database: tables, columns, relationships, security roles — the same store Dynamics 365 uses. Our two tables (*Asset*, *Dependency*) live there. The React app is just one way to look at that data; a canvas app, a model-driven form, a flow or a Copilot agent could use the same tables tomorrow without changing anything. | Two custom tables in the `DependencyAtlas` solution; the app is one head on the data | "The data outlives the app. That's the whole point of a platform." |
-| **C3** | **Generated, typed data access** | Normally a web app talks to a database by hand-writing HTTP calls and *guessing* field names. Here one CLI command (`pa app add data-source`) reads the table definition from Dataverse and *generates* TypeScript for you: a **model** (what an Asset looks like — exact column names, choice values) and a **service** (create / read / update / delete). You call `Espc26_assetsService.getAll()`; a typo becomes a compile error instead of a runtime bug, and sign-in/tokens are handled by the platform. | `src/generated/models/*` and `src/generated/services/*` | "I didn't write a single `fetch`. The CLI read the table metadata and gave me TypeScript." |
-| **C4** | **Lookups are relationships, not strings** | A *lookup* is Dataverse's foreign key: a column that points at a row in another table. *Business Owner* points at a real user record; *Dependent Asset* and *Required Asset* point at Asset rows. The screen shows a name, the database stores an ID — so renaming a person or system updates everywhere, and you never end up with "Grady Archie" and "G. Archie" as two different owners. In code you set a lookup with `@odata.bind` ("point this column at that row"). | `espc26_BusinessOwner@odata.bind`; two lookups from Dependency to Asset | "Business owner is a *reference* to a real person — not a free-text field someone misspells in 2027." |
-| **C5** | **Business ownership ≠ record ownership** | Every Dataverse row can have a technical *owner* — the user or team that controls the record, used for permissions. That is **not** the same as who is accountable for the Identity API in the business. We model accountability as its own explicit lookup (*Business Owner Reference*) and make the tables organization-owned, so the two ideas never get confused. Rule of thumb: *record owner* = who may edit the row; *business owner* = who you call at 3 a.m. | `espc26_businessowner` vs Dataverse `ownerid`; tables are organization-owned | "Who's accountable for the Identity API and who created the row are two different questions." |
-| **C6** | **Graphs are the right model for dependencies** | A list of systems answers "what do we have?". A graph — boxes connected by arrows — answers "what depends on what?". Every arrow here means *A requires B*. The moment you store dependencies as rows pointing at other rows (C4), you have a graph, and questions like "what breaks?" become computable instead of tribal knowledge. | Directed edges rendered with React Flow | "A table tells you *what* you have. A graph tells you *what hurts*." |
-| **C7** | **Deterministic graph traversal** | The simulation is a *graph walk*: start at the asset that went down, find everything that requires it, then everything that requires *those*, and keep going. *Deterministic* means the same input always gives the same answer. A *visited set* is simply a list of boxes already seen — so a box reachable by two routes is counted once, and a loop stops instead of running forever. It is a textbook algorithm (breadth-first search), about 40 lines, with unit tests. | `computeImpact` in `src/graph/impact.ts`; `impact.test.ts` | "Cycles don't crash it, diamonds don't double count. That's a 40-line function with 9 unit tests." |
-| **C8** ⏭ | *(skip on stage)* Direction matters | Covered implicitly by C6/C7: arrows mean *requires*, so an outage flows *against* the arrows. Keep the ID for reference; don't spend time on it. | — | — |
-| **C9** | **Direct vs indirect blast radius** | *Direct* = systems that use the failed asset themselves (one hop). *Indirect* = systems that only break because something *in between* broke (two or more hops). The *blast radius* is the full, de-duplicated set. Why it matters: the Shipping API team never touched Identity, yet they are down — those are the people who find out last unless someone computes this. | Side panel stats: direct / indirect / affected total | "The thing that breaks is rarely the thing you touched." |
-| **C10** | **Local what-if vs persisted state** | The app makes two very different kinds of change. *Simulate unavailable* is a thought experiment that lives only in the browser's memory — click *Reset* and nothing ever happened; Dataverse is untouched. *Change owner* and *Add dependency* are real writes that every other user sees immediately. Keeping the two visibly separate lets people explore freely without fear of breaking shared data. | Simulation = React state; edits go through the generated services | "Simulation is a thought experiment. Changing the owner is a commit." |
-| **C11** ↺ | **Freedom means responsibility: you now own the UX** | Canvas and model-driven apps make many UX decisions *for* you (galleries, forms, responsive behaviour). In a code app, every one of those decisions is yours. Example here: the graph layout is computed once and never reshuffles when you click, search or simulate — because a picture that moves destroys trust. Pro-code power comes with pro-code duty; the platform no longer protects your users from your choices. | dagre layout runs once per asset set; selection/simulation never move nodes | "If the picture moves every time you click, nobody trusts the picture." |
-| **C12** ♥ | **Idempotent infrastructure & data** | *Idempotent* = you can run it again and again and the result is the same — no duplicates, no errors. The scripts that create the tables check what already exists; the seed script upserts rows through a unique *seed key*; *reset* deletes only what the demo created and re-seeds. Why it matters: anyone can reproduce this environment in minutes, and nobody inherits a half-configured mess. It is ALM for schema *and* data. | `npm run provision` / `seed` / `reset`; alternate keys on `seedkey` | "I can nuke the demo and be back in 20 seconds. Repeatability is a feature." |
-| **C13** ♥ | **Accessible by design** | Impact states are shown with a text label *and* an icon (⛔ Unavailable, ⚠ Direct impact, ◔ Indirect impact) plus dimming — never colour alone. Roughly 1 in 12 men can't reliably tell red from green, and conference projectors wash colours out anyway. The legend repeats the same icons. Nothing about this is hard; it just has to be decided. | `AssetNode` badges, legend, side-panel stats | "Red/green is not a legend. ⚠ Direct impact is." |
-| **C14** ♥ | **Governance still applies** | A code app is still a Power App. It lives in an environment, must be *enabled by an admin* (we hit that switch today), is added to a solution for ALM, is shared like any other app, obeys DLP policies, and reads Dataverse with the *user's* permissions — not a service account. Developers get freedom; the organisation keeps the keys. | Environment feature flag; `pa app push --solution-id`; sharing | "Admins keep the keys. Developers get a better car." |
+| **C1** | **Code apps** | Power Apps used to mean a browser designer and formulas. A *code app* is a normal React/TypeScript web app, written in VS Code, that Power Apps hosts and runs — same sign-in, same sharing, same data, same app list. | "Same tenant, same login, same governance — but it's *my* React." | Q1 |
+| **C6** | **The graph** | A list says what you have. A graph — boxes and arrows — says what depends on what. Every arrow here means *A requires B*. Once dependencies are rows pointing at rows, "what breaks?" becomes a computation instead of a memory. | "A table tells you what you have. A graph tells you what hurts." | Q1, Q2 |
+| **C7** ↺ | **The computer walks the graph** | Start at the box that died, follow the arrows backwards, collect everything you reach, stop when you've seen it all. That's the whole simulation. The messy bits — two boxes needing each other, one box reachable two ways — are exactly what humans get wrong at 3 a.m. and computers get right every time. | "You know what Identity API *does*. Nobody can hold fifty arrows in their head. Let the computer walk — the human decides what to do with the answer." | Q2 |
+| **C9** | **Direct vs indirect** | *Direct* = uses the dead thing itself. *Indirect* = only breaks because something in between broke. The indirect people are the ones who find out last. | "The thing that breaks is rarely the thing you touched." | Q2 |
+| **C2** | **Dataverse underneath** | Dataverse is the Power Platform's database. The two tables live there; the React app is just one way to look at them. Edit here, it's changed for everyone and every other app. | "Simulation is a thought experiment. Changing the owner is a commit." | Q3 |
+| **C12–14** ♥ | **Built the right way** | *Idempotent* scripts (run twice, same result, reset in 20 s). *Accessible* states (icons and words, not red/green). *Governed* (an admin enabled code apps for this environment; it sits in a solution; it runs with the user's permissions). | "Build the right thing — and build it the right way. Those used to be two budgets." | Q5 |
 
-★ = lead with these · ♥ = the "built the right way" trio · ↺ = reframed for a Power Platform audience · ⏭ = skip
+**One insight (I1):** *Criticality labels lie; graphs don't.* A field someone typed says "low". The structure says seven systems fall over. Risk should be computed, not declared — and then a human decides what to do about it.
 
-### Insights (the "aha" moments)
-
-Referenced as **I1–I5**.
-
-| # | Insight | Explain it | Evidence in the data |
-| --- | --- | --- | --- |
-| **I1** | **Criticality labels lie; graphs don't.** | *Criticality* is an opinion someone typed into a field, judged by what the system itself does. *Dependents* is a fact derived from structure. A geocoding service is "low" on its own — but Shipping needs it, Orders needs Shipping, Checkout and both portals need Orders. Risk should be *computed* from how things connect, not *declared*. | Top ownership gap is *Maps Provider* — tagged *Low*, owned by nobody, **7** systems depend on it. |
-| **I2** | **Shared services are quiet single points of failure.** | Identity, configuration, central databases accumulate dependents one integration at a time; each team only sees its own arrow. Nobody sees the *aggregate* until the service is down. A graph makes the aggregate visible before the incident instead of in the post-mortem. | Identity API: **8** direct dependents, 9 affected in total. |
-| **I3** | **Cycles exist in real estates.** | Real systems depend on each other mutually: sync jobs, bidirectional integrations, "temporary" workarounds from 2019. Any tool or script that assumes a neat tree will loop forever or crash on the first cycle. Design for cycles from day one — here the visited set makes it a non-event. | Legacy CRM ⇄ CRM Sync Job; simulating Customer Database still terminates with **16** affected. |
-| **I4** | **Diamond paths are everywhere.** | When a system can be reached by more than one route, naïvely "counting every path" overstates impact — the Customer Portal would be counted twice. The visited set guarantees each system is counted once. This matters because executives see *one number*, and it has to be right. | Customer Portal reaches Identity API via Checkout *and* Orders; counted once in the **9**. |
-| **I5** | **"No business owner" is a data quality problem with an operational cost.** | An empty owner field looks cosmetic. During an outage it is the person you *cannot* call. Ranking unowned assets by how many systems depend on them turns a vague data-quality backlog into a prioritised to-do list. Data quality *is* operational readiness. | 11 unowned assets; the ranking puts Maps Provider (7), Shipping API (6), ETL Pipeline (4) on top. |
-
-### Approaches you can advocate
-
-Referenced as **A1–A5**.
-
-| # | Approach | Explain it | In this project |
-| --- | --- | --- | --- |
-| **A1** | **CLI-first platform development** | Everything from creating the app to publishing it happens in the terminal with the Power Apps CLI (`pa`). No clicking through wizards. That makes it scriptable, repeatable, CI/CD-friendly — and it is exactly where AI coding assistants are most useful, because they live in the terminal too. | `pa app init` → `pa app add data-source` → `npm run dev` → `pa app push --solution-id …` |
-| **A2** | **Schema as code** | Tables, columns, lookups and keys are created by a script that calls the Dataverse Web API, and that script is checked into git. It is *infrastructure as code* for your data model: environments stay identical, changes are reviewable, nobody clicks through the maker portal forty times. | `scripts/provision.mjs` + `scripts/schema.mjs` |
-| **A3** | **Test the algorithm, not the UI** | The UI is a thin shell over pure functions. Test the functions — they are fast, deterministic and cover the edge cases (cycles, diamonds, direction). Click-test the UI by hand. You get confidence where bugs are expensive, without a brittle UI test suite. | 11 Vitest tests run in under a second; `impact.test.ts`, `ownershipGaps.test.ts` |
-| **A4** | **AI pair programming with a rehearsed prompt** | AI writes good code when you can describe the exact shape of the answer and name the function it should reuse. Rehearse the prompt, know the expected output, keep the change small. Live coding then becomes a *demonstration*, not a gamble. | The "Ownership gaps" prompt reuses `computeImpact`; expected result: Maps Provider on top |
-| **A5** | **Branch for the stunt** | The deployed baseline lives on `main`. The live-coding result is committed on a separate branch. If the model misbehaves on stage, `git checkout` the branch and the audience sees the identical result — and a lesson about rehearsing. | `main` (deployed) vs `rehearsal/ownership-gaps` |
-
-### The empathy thread — building the right thing, *the right way*
-
-The keynote motto is **empathy**. Dependency Atlas builds the right thing (answer "what breaks?") — but the ♥ concepts
-are about building it *the right way*, and each one is empathy for a specific person. The point to make: with AI
-assistants and the new platform capabilities, doing it right is no longer the expensive option.
-
-| Empathy for… | Concept(s) | What it looks like here |
-| --- | --- | --- |
-| **The person on call at 3 a.m.** | C9, I2, I5 | Direct vs indirect tiers; owners to notify; the unowned list. The app tells them *who* and *what*, not just *that*. |
-| **Users who can't see colour / the back row of the hall** | C13 | Labels and icons, not red/green. Large node text. |
-| **Users under pressure** | C11, C10 | The picture never moves under them; what-if is safe to play with. |
-| **Admins and IT governance** | C14 | Enabled per environment, solution-aware, user-level permissions. Freedom without a shadow IT bypass. |
-| **Colleagues and future-you** | C12, A2, A5 | Reproducible schema and data; a reset button; rehearsed branches. Nobody inherits a mess. |
-| **The business** | C5, I1 | Accountability modelled explicitly; risk computed, not declared. |
-
-### Coverage map — where each ID lands in the demo
-
-| Demo beat | Teaches |
-| --- | --- |
-| Slides: hook + thesis | C1, C6 |
-| Graph tour + legend | C6, C13 |
-| Search → Identity API panel | C4, C5 |
-| Simulation 1 (Identity API) | C7, C9, C10, C11, I2, I4 |
-| Simulation 2 (Customer Database) | C7, C9, I3 |
-| Owner edit + maker portal proof | C2, C3, C4, C5, C10 |
-| VS Code: generated services, `computeImpact`, tests | C3, C7, A1, A3 |
-| Live coding | C7, I1, I5, A4, A5 |
-| Close | C1, C12, C13, C14, A2 — the empathy thread |
+**One approach (A4):** *A rehearsed prompt.* Know the shape of the answer, name the function to reuse, keep it small. Then AI on stage is a demonstration, not a gamble.
 
 ---
 
-## 2. Demo flow (8–10 minutes)
+## 2. The ten minutes — Vesa asks, Luise shows
 
-**Setup before going on stage**
+Pre-stage: `npm run reset` done · published app open, hard-refreshed, zoomed ~125 % · VS Code on `main`, `npm run dev` already running, Copilot chat open · make.powerapps.com → Tables → Asset data view in a second tab.
 
-- [ ] `npm run reset` (restores 32 assets / 50 dependencies, clears any live edits)
-- [ ] Published app open in a browser tab, hard-refreshed, signed in as the hscluise account, zoomed to fit
-- [ ] VS Code open on `main`, with `src/graph/impact.ts` and a terminal visible; Copilot chat panel ready
-- [ ] make.powerapps.com → Tables → *Asset* open in a second tab (for the "it's just Dataverse" beat)
-- [ ] PowerPoint on the title slide; presenter view showing this flow
-- [ ] Browser zoom ~125 % so node labels are readable from the back row
+Cumulative timings. **Q3 is the one to drop** if you're over.
 
-Timings are cumulative.
+### 0:00 — Walk-on (30 s)
 
-### 0:00 — Slide: *"What could possibly go wrong?"* (PowerPoint, 45 s) — C6
+Vesa: intro, "Luise has been telling everyone the future of low code is code…"
 
-**Show:** A slide with just that sentence. Then a second slide: a messy architecture diagram (any one you like) with
-the caption *"Every org has one of these. Nobody knows what happens when the box in the middle dies."*
+### 0:30 — **Q1 · "So what do you mean by that?"** → the app (1:30) — C1, C6
 
-**Say:** "Every estate has a diagram like this. It's on a wiki page last updated by someone who left. Tonight we're
-going to replace it with something that can answer the only question that matters at 3 a.m.: *what breaks?*"
+**Show:** the published app. Let it load. Point at *32 assets · 50 dependencies*.
 
-### 0:45 — Slide: *"The future of low code is code (apps)."* (PowerPoint, 30 s) — C1
+**Say:** "This is a Power App. It's React and TypeScript, written in VS Code, and Power Apps runs it — same login, same sharing button up there, same governance. That's a code app. And this is the *What-Could-Possibly-Go-Wrong Graph*: every box is a system in a web shop, every arrow says *A requires B*. Every company has this diagram on a wiki page. Nobody has it as something you can *ask*."
 
-**Say:** "Power Apps grew up. Code apps let me bring React, TypeScript, and any npm package I want — and still run
-inside the Power Apps player with the tenant's identity, the environment's governance, and Dataverse underneath.
-Let me show you what that buys you."
+Zoom gently into the top row (portals, mobile app). Point at a ⚠ *No business owner*. "Hold that thought."
 
-### 1:15 — Switch to the **published app** (browser, 90 s) — C6, C13
+### 2:00 — **Q2 · "Okay — what can I ask it?"** → simulate Identity API (2:00) — C7, C9
 
-**Click:** Nothing yet. Let the graph load — point at the counter *"32 assets · 50 dependencies"*.
+**Click:** search `Identity` → Enter → **⛔ Simulate unavailable**. Let it breathe.
 
-**Say:** "This is the What-Could-Possibly-Go-Wrong Graph. Every box is a system in a fictional web shop. Every arrow
-says *A requires B*. Dark theme, because incidents happen at night."
+**Say:** "What breaks if single sign-on goes down. **Eight directly. One more indirectly. Nine systems.** Look at Shipping, the yellow one — Shipping doesn't even talk to Identity. It needs Inventory, Inventory needs Identity. Those are the people who find out last."
 
-**Click:** Legend (bottom) — point at *"A → B means A requires B"* and *⚠ No business owner*.
-**Click:** Scroll-zoom into the top row (Customer Portal, Mobile App). Pan down to Identity API.
+**Say (C7):** "You know what Identity API does. Nobody can hold fifty arrows in their head — especially not at three in the morning. The computer walks the graph: backwards along the arrows, collects what it reaches, stops when it's seen everything. It even survives the ugly parts — two systems that need each other, one system reachable two ways. That's its job. *Ours* is this list —" point at **Owners to notify** — "seven people to call. And two systems where the answer is *nobody*."
 
-**Say:** "Notice the ⚠ on some boxes — nobody owns them. Hold that thought."
+**Click:** ↺ Reset simulation.
 
-### 2:45 — Search & select (browser, 45 s) — C4, C5
+### 4:00 — **Q3 · "Is that real data or a demo file?"** → change an owner (1:30) — C2
 
-**Click:** Search box → type `Identity` → Enter. The graph centres on Identity API, side panel opens.
+**Click:** search `Admin Console` → ✎ Change owner → **Grady Archie** → Save. Green: *saved to Dataverse*. ⚠ becomes 👤.
+**Switch tab:** make.powerapps.com → Asset table → Admin Console row → owner is set.
 
-**Say:** "Identity API. Single sign-on for every channel. High criticality, owned by Grady. *Required by 8* —
-read that list: both portals, the mobile app, checkout, orders, inventory, reporting, admin."
+**Say:** "Dataverse. Same table a canvas app or a model-driven form would use. Simulation was a thought experiment; this was a commit — a human just decided who is accountable, and every other app in the tenant now knows. That decision isn't going to be automated. It shouldn't be."
 
-### 3:30 — **Simulate unavailable** (browser, 90 s) — the money shot — C7, C9, C10, C11, I2, I4
+### 5:30 — **Q4 · "Where's the AI in this — and where's the human?"** → live coding (2:30) — I1, A4
 
-**Click:** *⛔ Simulate unavailable*.
+**Switch:** VS Code, Copilot chat. Paste:
 
-**Let it breathe for 2 seconds.** The graph dims; 8 boxes turn orange (direct), one turns yellow (indirect), paths
-light up magenta.
+> In Dependency Atlas, add an "Ownership gaps" panel: find every asset with no business owner, compute how many unique assets depend on it directly or indirectly by reusing `computeImpact` from `src/graph/impact.ts`, and rank them by that count (highest first). Show it as a toggleable panel in the top bar with the asset name, type and dependent count; clicking a row selects and centres that asset on the graph.
 
-**Say:** "**8 direct, 1 indirect, 9 affected.** The whole customer-facing surface is gone. And look at *Owners to
-notify*: seven people — and two systems where the answer is *nobody*."
+**While it types, say:** "I'm not asking it to invent anything. I'm asking it to *reuse* the walk we just watched and rank the unowned systems by how much falls over. I know what the answer should look like — that's the part that stays human."
 
-**Point:** Shipping API in yellow. "Shipping doesn't even talk to Identity. It needs Inventory, Inventory needs
-Identity. That's the indirect tier — the thing that breaks is rarely the thing you touched."
+**Switch:** Local Play tab → **⚠ Ownership gaps (11)**.
 
-**Point:** Customer Portal. "The portal reaches Identity through Checkout *and* through Orders. Two paths, counted
-once. That's a visited set doing its job."
+**Punchline:** "Number one: **Maps Provider. Low criticality. Nobody owns it. Seven systems depend on it.** The label said *low* — a human typed that, once, years ago. The graph says *you have a problem*. Criticality labels lie; graphs don't. The AI did the ranking in ninety seconds. Deciding that this matters, and walking over to someone's desk to say *this one is yours now* — that's us."
 
-**Click:** *↺ Reset simulation*.
+**Fallback:** `git checkout rehearsal/ownership-gaps`, reload. "…and this is why we rehearse."
 
-### 5:00 — Second simulation: the cycle (browser, 45 s) — C7, C9, I3
+### 8:00 — **Q5 · "What did it take to get this into a real tenant?"** → built the right way (1:30) — C12, C13, C14
 
-**Click:** Search `Customer Database` → Enter → *Simulate unavailable*.
+**Show** three quick things, no clicking around:
+1. Terminal: `npm run reset` — it runs while you talk (~20 s). "Tables, data, back to zero, twice a day if I want. Idempotent. Nobody inherits my mess."
+2. App legend: ⛔ ⚠ ◔ "Icons and words, not red and green. One in twelve men in this room can't tell those apart, and the projector can't either."
+3. Say it, don't show it: "And an admin had to flip a switch — *Power Apps code apps* — for this environment before I could publish. It's in a solution, it runs with *your* permissions on Dataverse. Admins keep the keys. Developers get a better car."
 
-**Say:** "**4 direct, 12 indirect, 16 affected.** Watch the bottom left: Legacy CRM and CRM Sync Job depend on
-*each other*. Real estates have cycles. Naïve code loops forever; this one terminates and still counts them
-once. The HR cluster and the Intranet Wiki stay dim — unaffected, as they should be."
+**Close:** "Build the right thing — and build it the right way. Those used to be two budgets. With AI doing the typing and the platform doing the plumbing, they're not anymore. That's what empathy looks like in code: for the person on call, for the admin who has to trust it, for whoever inherits it. Go find your Maps Provider."
 
-**Click:** *↺ Reset simulation*. Close the panel (✕).
-
-### 5:45 — It's real Dataverse: make an edit (browser, 60 s) — C2, C3, C4, C5, C10
-
-**Click:** Search `Admin Console` → Enter. Panel shows *⚠ No business owner assigned*.
-**Click:** *✎ Change owner* → choose **Grady Archie** → *Save owner*. Green message: *Business owner saved to Dataverse.*
-The ⚠ on the node becomes 👤 Grady Archie.
-
-**Click:** Switch to the **make.powerapps.com** tab → Tables → Asset → data view → find *Admin Console*. Owner is set.
-
-**Say:** "That wasn't a fake. That went through a generated, typed Dataverse service, set a lookup to a real
-`systemuser`, and the row updated. Same table a canvas app or a model-driven form would use. The data is the
-platform; this is just a very good front end."
-
-*(Optional 20 s if time allows: back in the app, *Add dependency* → Admin Console requires Feature Flag Service →
-Save → edge appears; try to save it again → red "already requires". "Validation, because demos have audiences.")*
-
-### 6:45 — Switch to **VS Code**: how this was built (90 s) — C3, C7, A1, A3
-
-**Show:** Explorer — point at `src/generated/` (don't open).
-**Say:** "`pa app add data-source --connector dataverse --table espc26_asset`. That's it. Models and CRUD services
-generated from table metadata. No handwritten REST."
-
-**Open:** `src/graph/impact.ts`. Scroll to `computeImpact`.
-**Say:** "The whole simulation is this: a breadth-first walk *against* the arrows, with a visited set. Depth one is
-direct, deeper is indirect, the source is never counted. Forty lines."
-
-**Open:** `src/graph/impact.test.ts` → terminal → `npm test` → *11 passed* (9 on main).
-**Say:** "Direction, diamonds, cycles, independent nodes — tested where it matters: the algorithm, not the pixels."
-
-### 8:15 — **Live coding** with Copilot (90–120 s) — C7, I1, I5, A4, A5
-
-**Open:** Copilot chat. Paste the rehearsed prompt:
-
-> In Dependency Atlas, add an "Ownership gaps" panel: find every asset with no business owner, compute how many
-> unique assets depend on it directly or indirectly by reusing `computeImpact` from `src/graph/impact.ts`, and rank
-> them by that count (highest first). Show it as a toggleable panel in the top bar with the asset name, type and
-> dependent count; clicking a row selects and centres that asset on the graph.
-
-**While it generates, say:** "I'm not asking it to invent an algorithm. I'm asking it to *reuse* the one we just
-tested. That's the skill: knowing what the answer should look like."
-
-**When done:** `npm run dev` is already running → switch to the Local Play tab → click *⚠ Ownership gaps (11)*.
-
-**Punchline:** "Number one: **Maps Provider. Low criticality. No owner. Seven systems depend on it.** The label
-said 'low'. The graph said 'you have a problem'. Criticality labels lie. Graphs don't."
-
-**Fallback if the model misbehaves:** `git checkout rehearsal/ownership-gaps` in the terminal, reload. Say
-"…and this is why we rehearse. Same code, same result."
-
-### 9:45 — Close (PowerPoint, 30 s) — C1, C12, C13, C14, A2 (empathy thread)
-
-**Slide:** *"The future of low code is code (apps)."* with three bullets:
-- Bring your own stack — keep the platform's identity, data, governance (C1, C14)
-- Model the estate as a graph; answer *what breaks* before it breaks (C6, C9)
-- Build it right, not just build the right thing: repeatable, accessible, governed (C12, C13, C14)
-
-**Say:** "We built the right thing — it answers *what breaks*. But look at *how*: the scripts run twice without
-breaking, the colours aren't the only signal, the admin flipped the switch and kept the keys. None of that was
-extra effort tonight — AI wrote half of it and the platform did the rest. That's what empathy looks like in code:
-for the person on call, for the colleague who inherits this, for the admin who has to trust it. Low code got us the
-data. Code apps get us the UI we actually want on top of it. Go find your Maps Provider."
+### 9:30 — Vesa wraps, you sit.
 
 ### Time budget
 
-| Segment | Minutes |
-| --- | --- |
-| Slides: hook + thesis | 1:15 |
-| Graph tour + search | 2:15 |
-| Simulation ×2 | 2:15 |
-| Real edit + Dataverse proof | 1:00 |
-| VS Code: how it's built | 1:30 |
-| Live coding + punchline | 1:30–2:00 |
-| Close | 0:30 |
-| **Total** | **~10:00** (cut the second simulation to land at 8:30) |
+| Exchange | Teaches | Minutes |
+| --- | --- | --- |
+| Walk-on | — | 0:30 |
+| Q1 What do you mean | C1, C6 | 1:30 |
+| Q2 What can I ask it | C7, C9 | 2:00 |
+| Q3 Is it real *(drop if over)* | C2 | 1:30 |
+| Q4 AI vs human | I1, A4 | 2:30 |
+| Q5 Into a real tenant | C12–14 | 1:30 |
+| Wrap | — | 0:30 |
+| | | **10:00** (8:30 without Q3) |
+
+### Suggested questions to give Vesa
+
+1. "You keep saying the future of low code is code. What do you mean?"
+2. "Okay — what can I actually ask it?"
+3. "Is that real data or a demo file?"
+4. "Where's the AI in this — and where's the human?"
+5. "What did it take to get this into a real tenant?"
 
 ---
 
 ## 3. Storyline
 
-**Arc:** *Fear → Sight → Agency → Trust → Craft → Punchline → Empathy.*
+**Arc:** *A graph you can ask → the computer walks, the human decides → it's real → AI ranks, human judges → built with care.*
 
-Underneath the arc runs the keynote motto: **empathy**. Steps 1–3 are empathy for the person on call (they get
-*who* and *what*, not just *that*). Steps 4–5 are empathy for admins and colleagues (governed, reproducible,
-tested). Step 6 is empathy for the business (risk computed, not declared). Say the word once, at the close — let the
-demo earn it first.
+Vesa's theme is that tools help but judgement and people stay. Every exchange lands on a person:
 
-1. **Fear (the hook) — C6.** "What could possibly go wrong?" Everyone laughs because everyone has the wiki diagram.
-   The joke is that nobody actually knows.
+| Exchange | The tool does | The human does |
+| --- | --- | --- |
+| Q1 | Draws the estate | Recognises their own wiki diagram |
+| Q2 | Walks fifty arrows, survives cycles and diamonds | Reads *owners to notify*, picks up the phone |
+| Q3 | Persists to Dataverse | Decides who is accountable |
+| Q4 | Ranks unowned systems by blast radius in 90 s | Knows what the answer should look like; decides it matters |
+| Q5 | Resets, labels, governs | Chose to build it that way — for the next person |
 
-2. **Sight (the graph) — C6, C13.** Show the estate as a living, dark, slightly sci-fi graph. Name it. *The
-   What-Could-Possibly-Go-Wrong Graph.* Establish the one rule: arrows mean *requires*. Plant the ⚠ seed.
-
-3. **Agency (simulation) — C7, C9, C10, C11, I2, I3, I4.** Kill Identity API. Now the audience *sees* the blast radius, the tiers, the owners to
-   call. Second simulation shows the tool is honest about hard cases (cycles, diamonds, unaffected islands). This
-   is where the technical crowd nods: *this isn't a toy*.
-
-4. **Trust (it's real) — C2, C3, C4, C5.** One edit, round-tripped to the Dataverse table in the maker portal. The message:
-   this is Power Platform data with a pro-code face, not a demo with a JSON file.
-
-5. **Craft (how) — C1, C3, C7, A1, A3.** Pull back the curtain: generated services, a 40-line traversal, tests. Tone: *this is
-   approachable*. The future of low code is code — and the code is smaller than you think.
-
-6. **Punchline (live coding) — I1, I5, A4, A5.** Ask the AI to reuse the traversal to rank ownership gaps. The answer surprises:
-   the "low criticality" external map service is the biggest unowned risk. Land the two taglines back to back:
-   *Criticality labels lie, graphs don't.* / *The future of low code is code (apps).*
-
-7. **Empathy (the close) — C12, C13, C14.** Step back from the feature to the *way* it was built: idempotent
-   scripts, labels not colours, admin-enabled and governed. Name the people each one is for. Then: "Doing it right
-   used to be the expensive option. It isn't anymore."
-
-### Recurring bits you can reuse
-
-- "Dark theme, because incidents happen at night."
-- "The thing that breaks is rarely the thing you touched."
-- "Simulation is a thought experiment. Changing the owner is a commit."
-- "Admins keep the keys. Developers get a better car."
-- "Criticality labels lie. Graphs don't."
+**Taglines (max three on stage):**
+- "A table tells you what you have. A graph tells you what hurts."
+- "Criticality labels lie; graphs don't."
 - "Build the right thing — and build it the right way. Those used to be two budgets."
-- "Go find your Maps Provider." (closing call to action)
 
-### What *not* to do
-
-- Don't re-layout or drag nodes during simulation — the stable picture is part of the argument.
-- Don't open `src/generated/` files — they're long and the point is you *didn't write them*.
-- Don't explain OData bind syntax on stage; say "it set a lookup" and move on.
-- Don't run the live prompt without `npm run dev` already up; the compile/HMR wait is the awkward silence.
+**Don't:** drag nodes during a simulation · open `src/generated/` · explain OData, lookups or record ownership · say "visited set" or "BFS" — say *the computer walks the graph*.
 
 ### Cheat sheet (presenter view)
 
-| Beat | Action | Expected | IDs |
-| --- | --- | --- | --- |
-| Tour | Load app | 32 assets · 50 dependencies | C6, C13 |
-| Sim 1 | Identity API → Simulate | 8 / 1 / 9 · 7 owners + 2 unowned | C7–C11, I2, I4 |
-| Sim 2 | Customer Database → Simulate | 4 / 12 / 16 · HR + Wiki dim | C7, C9, I3 |
-| Edit | Admin Console → owner Grady Archie | green toast, 👤 on node | C2–C5, C10 |
-| Tests | `npm test` | 9 passed (main) / 11 (rehearsal) | C7, A3 |
-| Live | Ownership gaps | #1 Maps Provider — 7 · #2 Shipping API — 6 · #3 ETL Pipeline — 4 | I1, I5, A4 |
-| Panic | `git checkout rehearsal/ownership-gaps` | same result | A5 |
-| After | `npm run reset` | back to 32 / 50, Admin Console unowned | C12 |
+| Q | Action | Expected |
+| --- | --- | --- |
+| Q1 | load app | 32 assets · 50 dependencies |
+| Q2 | Identity API → Simulate | **8 / 1 / 9** · 7 owners + 2 nobody · Shipping API yellow |
+| Q3 | Admin Console → owner Grady Archie → maker portal | green toast · row shows owner |
+| Q4 | paste prompt → Local Play → Ownership gaps | **#1 Maps Provider 7** · #2 Shipping API 6 · #3 ETL Pipeline 4 |
+| Q4 panic | `git checkout rehearsal/ownership-gaps` | same result |
+| Q5 | `npm run reset` | ~20 s · back to 32 / 50 · Admin Console unowned |
+
+---
+
+## Backstage — not on stage, but good to know for Q&A, blog, hallway
+
+Kept with stable IDs so earlier notes still resolve.
+
+| # | Concept | One sentence |
+| --- | --- | --- |
+| C3 | Generated, typed data access | `pa app add data-source` reads the table and generates TypeScript models and CRUD services; no hand-written HTTP. |
+| C4 | Lookups are relationships | Business Owner and the two asset references are foreign keys to real rows, set via `@odata.bind`. |
+| C5 | Business ownership ≠ record ownership | Dataverse `ownerid` is about permissions; our Business Owner lookup is about accountability; tables are org-owned so they don't collide. |
+| C8 | Direction matters | Arrows mean *requires*; outages flow against them. (Implicit in C7.) |
+| C10 | What-if vs persisted | Simulation is browser state only; owner/dependency edits are real writes. (Said in one line in Q3.) |
+| C11 | You own the UX now | Canvas apps made layout decisions for you; here the layout is computed once and never reshuffles — a moving picture destroys trust. |
+| I2 | Shared services are quiet SPOFs | Dependents accumulate one integration at a time; nobody sees the aggregate until it's down. |
+| I3 | Cycles exist | Legacy CRM ⇄ CRM Sync Job; anything assuming a tree loops or crashes. |
+| I4 | Diamonds exist | Customer Portal reaches Identity two ways; counted once. |
+| I5 | No owner has an operational cost | The ranking turns a data-quality backlog into a prioritised list. |
+| A1 | CLI-first | `pa app init` → `add data-source` → `npm run dev` → `pa app push`. |
+| A2 | Schema as code | Tables created by a script via the Web API, in git, re-runnable. |
+| A3 | Test the algorithm, not the UI | 11 Vitest tests on the traversal and ranking; UI click-tested by hand. |
+| A5 | Branch for the stunt | `main` deployed, `rehearsal/ownership-gaps` is the safety net. |
+
+If someone asks "how long did this take?": the schema scripts, seed, app, tests and deploy were built in one session with an AI assistant — which is itself the point of Q4.
