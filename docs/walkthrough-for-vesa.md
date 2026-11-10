@@ -6,16 +6,17 @@ Pick a system, press **Show blast radius**, and it shows what else stops working
 Plus a zero-code model-driven app on the same tables, and one live-coding moment with Copilot.
 
 **My angle:** people hear Power Platform and think *low code* and *apps*. I always thought *data and platform*.
-→ "The future of low code is code (apps)."
+→ my punchline, which I'd like to deliver myself in Q1: *"The future of low code is code (apps)."* Please don't tee it up in the intro.
 **Your theme:** every answer lands on a human — the tool computes, the person decides.
 
 ---
 
 ## The five questions (≈ 10 min, cumulative)
 
-**0:30 · Q1 — "You keep saying the future of low code is code. What do you mean?"**
+**0:30 · Q1 — "How do you see Power Platform in the age of AI?"**
 *Show: the graph, 32 systems · 50 dependencies.*
-- Power Platform ≠ low code + apps. For me it's **data and platform**: real tables, real relationships, identity/sharing/governance for free. The app on top is the least interesting part.
+- People hear Power Platform and think *low code + apps*. For me it's **data and platform**: real tables, real relationships, identity/sharing/governance for free. The app on top is the least interesting part.
+- Then my line: **"The future of low code is code."** Low code got us the data and the platform; AI writes the code now; so I no longer compromise on what's on top.
 - This *is* a Power App — React, written in VS Code, run by Power Apps. Same login, same Share button, same governance.
 - Every arrow = "A requires B". Everyone has this diagram on a wiki. Nobody has it as something you can *ask*.
 

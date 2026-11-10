@@ -94,15 +94,15 @@ Cumulative timings. **Q3 is the one to drop** if you're over.
 
 ### 0:00 — Walk-on (30 s)
 
-Vesa: intro, "Luise has been telling everyone the future of low code is code…"
+Vesa: intro — Luise, independent, Power Platform. No spoilers: *you* deliver the line.
 
-### 0:30 — **Q1 · "So what do you mean by that?"** → the app (1:45) — C1, C2, C6
+### 0:30 — **Q1 · "How do you see Power Platform in the age of AI?"** → the app (1:45) — C1, C2, C6
 
 **Show:** the published app. Let it load. Point at *32 assets · 50 dependencies*.
 
 **Say (thesis first):** "When people hear Power Platform they think *low code* and they think *apps*. I never did. For me it was always **data and platform**: the data in one place, with real tables and real relationships — and a platform that gives me identity, sharing and governance for free. The app on top is the least interesting part. It can be a canvas app, a model-driven form, an agent — or, now, my own React."
 
-**Say (C1):** "Because this *is* a Power App. React and TypeScript, written in VS Code, and Power Apps runs it — same login, same sharing button up there, same governance. That's a code app. Low code got us the data and the platform. Code apps mean I don't have to compromise on the thing on top anymore."
+**Say (C1 — your line):** "So here's how I see it: **the future of low code is code.** Not as a betrayal of low code — as the natural end of it. Because this *is* a Power App. React and TypeScript, written in VS Code, and Power Apps runs it — same login, same sharing button up there, same governance. That's a code app. Low code got us the data and the platform. AI writes the code now. So I don't have to compromise on the thing on top anymore."
 
 **Say (C6):** "And this is the *What-Could-Possibly-Go-Wrong Graph*: every box is a system in a web shop, every arrow says *A requires B*. Every company has this diagram on a wiki page. Nobody has it as something you can *ask*."
 
@@ -169,7 +169,7 @@ This is the empathy beat. Slow down. Three things, each for a person who isn't i
 | Exchange | Teaches | Minutes |
 | --- | --- | --- |
 | Walk-on | — | 0:30 |
-| Q1 What do you mean (thesis) | C1, C2, C6 | 1:45 |
+| Q1 Power Platform in the age of AI (thesis) | C1, C2, C6 | 1:45 |
 | Q2 What can I ask it | C7, C9 | 2:00 |
 | Q3 Is it real *(drop if over)* | C2 | 1:00 |
 | Q4 AI vs human | I1, A4 | 2:15 |
@@ -179,7 +179,7 @@ This is the empathy beat. Slow down. Three things, each for a person who isn't i
 
 ### Suggested questions to give Vesa
 
-1. "You keep saying the future of low code is code. What do you mean?"
+1. "How do you see Power Platform in the age of AI?"  *(don't pre-empt the "future of low code is code" line — Luise says it)*
 2. "Okay — what can I actually ask it?"
 3. "Is that real data or a demo file?"
 4. "Where's the AI in this — and where's the human?"
