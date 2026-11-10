@@ -88,7 +88,7 @@ the right way is no longer the expensive way. Each one is empathy for a specific
 
 ## 2. The ten minutes — Vesa asks, Luise shows
 
-Pre-stage: `npm run reset` done · published app open, hard-refreshed, zoomed ~125 % · VS Code on `main`, `npm run dev` already running, Copilot chat open · **Dependency Atlas Admin** (model-driven app) open on *Active Assets* in a second tab: https://org4caa9250.crm4.dynamics.com/main.aspx?appid=b67a7d91-fbdc-f111-84ea-000d3a489879
+Pre-stage: `npm run reset` done · **then** reload the published app tab (it reads Dataverse once, on load — a tab opened before the reset shows old owners) · zoomed ~125 % · VS Code on `main`, `npm run dev` already running, Copilot chat open · **Dependency Atlas Admin** (model-driven app) open on *Active Assets* in a second tab: https://org4caa9250.crm4.dynamics.com/main.aspx?appid=b67a7d91-fbdc-f111-84ea-000d3a489879
 
 Cumulative timings. **Q3 is the one to drop** if you're over.
 
