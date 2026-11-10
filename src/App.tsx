@@ -6,6 +6,8 @@ import { Toolbar } from "./components/Toolbar";
 import { EmptyState, ErrorState, LoadingState } from "./components/StateViews";
 import { useAtlasData } from "./data/useAtlasData";
 import { buildDependentsIndex, computeImpact, summarizeImpact } from "./graph/impact";
+import { rankOwnershipGaps } from "./graph/ownershipGaps";
+import { OwnershipGapsPanel } from "./components/OwnershipGapsPanel";
 import { layoutGraph, type Positions } from "./graph/layout";
 import type { Asset } from "./types";
 
@@ -40,6 +42,9 @@ export default function App() {
     [simulatedId, dependencies, dependentsIndex, assetsById],
   );
   const summary = useMemo(() => (impact ? summarizeImpact(impact, assetsById) : null), [impact, assetsById]);
+
+  const [gapsOpen, setGapsOpen] = useState(false);
+  const ownershipGaps = useMemo(() => rankOwnershipGaps(assets, dependencies), [assets, dependencies]);
 
   const searchHits = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -84,7 +89,20 @@ export default function App() {
           reloading={false}
           simulating={impact !== null}
           onResetSimulation={() => setSimulatedId(null)}
+          gapCount={ownershipGaps.length}
+          gapsOpen={gapsOpen}
+          onToggleGaps={() => setGapsOpen((v) => !v)}
         />
+        {gapsOpen && (
+          <OwnershipGapsPanel
+            gaps={ownershipGaps}
+            onClose={() => setGapsOpen(false)}
+            onPick={(id) => {
+              const a = assetsById.get(id);
+              if (a) focusAsset(a);
+            }}
+          />
+        )}
         <AtlasGraph
           assets={assets}
           dependencies={dependencies}
