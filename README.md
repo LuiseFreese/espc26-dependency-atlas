@@ -13,6 +13,7 @@ dependency graph, simulates the outage of any asset ("what breaks if this goes d
 | Tenant | `b469e370-d6a6-45b5-928e-856ae0307a6d` (hscluise.onmicrosoft.com) |
 | Published app | https://apps.powerapps.com/play/e/33ba429d-d577-e7e1-8134-11e72dc99c51/app/23b555ed-86ef-4539-bc1a-976e11974af6?tenantId=b469e370-d6a6-45b5-928e-856ae0307a6d |
 | App ID | `23b555ed-86ef-4539-bc1a-976e11974af6` |
+| Companion model-driven app | **Dependency Atlas Admin** (`espc26_DependencyAtlasAdmin`) · `b67a7d91-fbdc-f111-84ea-000d3a489879` · https://org4caa9250.crm4.dynamics.com/main.aspx?appid=b67a7d91-fbdc-f111-84ea-000d3a489879 |
 | Publisher | `espc26` (prefix `espc26`) · `0712f3d7-dcdc-f111-84e8-6045bd93ffe1` |
 | Solution | `DependencyAtlas` ("Dependency Atlas", unmanaged) · `1412f3d7-dcdc-f111-84e8-6045bd93ffe1` |
 | Table `espc26_asset` | MetadataId `bf85b5d3-2497-4173-bee7-7e183ef9b481` · ObjectTypeCode `10944` · entity set `espc26_assets` |
@@ -56,6 +57,7 @@ dependency graph, simulates the outage of any asset ("what breaks if this goes d
 | Task | Command | Notes |
 | --- | --- | --- |
 | Provision schema | `npm run provision` | Idempotent. Creates publisher, solution, tables, columns, lookups, alternate keys; publishes. Safe to re-run. |
+| Provision model-driven app | `npm run provision:mda` | Idempotent. Updates the main form + default view of both tables (name, type, criticality, owner / both asset references), creates the **Dependency Atlas Admin** app + sitemap in the solution, publishes and validates. Zero-code companion UI on the same rows. |
 | Seed demo data | `npm run seed` | Idempotent upsert via the `seedkey` alternate key — never duplicates. 32 assets, 50 dependencies. |
 | Reset demo data | `npm run reset` | Deletes only seeded rows (and any dependency touching a seeded asset, e.g. ones created live on stage) and re-seeds. Non-seeded rows are untouched. |
 | Local development | `npm run dev` | Prints a **Local Play** URL; open it in the browser profile that is signed in to the tenant. |
@@ -98,7 +100,7 @@ src/
 scripts/
   dataverse.mjs               Web API helper (az token, paging, OData helpers)
   schema.mjs                  logical names shared by provision/seed/reset
-  provision.mjs · seed.mjs · reset.mjs · seed-data.mjs
+  provision.mjs · provision-mda.mjs · seed.mjs · reset.mjs · seed-data.mjs
 ```
 
 Impact rule: **if A requires B, simulating B affects A.** Traversal is breadth-first against the edge direction with a

@@ -11,6 +11,29 @@ All numbers are the verified values after `npm run reset`.
 
 ---
 
+## What Dependency Atlas is — the purpose, in three sentences
+
+> **Dependency Atlas is a map of which systems need which other systems to work — and a button that answers
+> "what breaks if this one goes down?"** Every box is an application, API, database or external service; every
+> arrow means *A requires B*; every box has (or embarrassingly lacks) a business owner. Pick any system, press
+> *Show blast radius*, and you see exactly what stops working, how far the damage spreads, and who you need to
+> call.
+
+The problem it solves: every organisation has an architecture diagram on a wiki that nobody trusts and nobody
+can query. Dependency knowledge lives in people's heads and surfaces during the incident, not before. Dependency
+Atlas keeps it as *data* — in Dataverse, with real relationships — so the question can be asked by anyone, any
+time, from any app.
+
+Who it's for: whoever is on call at 3 a.m., whoever has to decide which systems deserve an owner, and whoever
+runs the change-advisory meeting on Monday. In the keynote it is also a vehicle: the same data is shown through a
+**React code app** (the graph) and a **zero-code model-driven app** (the grid), which is the whole "data and
+platform" argument in one screen switch.
+
+Say-it-in-one-breath version for Vesa's walk-on: *"It's a what-could-possibly-go-wrong graph for your IT estate.
+You pick a system, pretend it died, and it tells you what else stops working and who to call."*
+
+---
+
 ## 0. Your thesis — data and platform, not low code and apps
 
 Say a version of this early (Q1). It is the lens for everything that follows.
@@ -40,7 +63,7 @@ Eight things, in two groups: five about *what it does*, three ♥ about *how it 
 | # | Concept | Explain it (newcomer) | Stage line | Where |
 | --- | --- | --- | --- | --- |
 | **C1** | **Code apps** | Power Apps used to mean a browser designer and formulas. A *code app* is a normal React/TypeScript web app, written in VS Code, that Power Apps hosts and runs — same sign-in, same sharing, same data, same app list. | "Same tenant, same login, same governance — but it's *my* React." | Q1 |
-| **C2** | **Dataverse underneath** | Dataverse is the Power Platform's database. The two tables live there; the React app is just one way to look at them. Edit here, it's changed for everyone and every other app. *This is the "data and platform" thesis made visible.* | "Simulation is a thought experiment. Changing the owner is a commit." | Q1, Q3 |
+| **C2** | **Dataverse underneath** | Dataverse is the Power Platform's database. The two tables live there; the React app is just one way to look at them. On stage a *second*, zero-code model-driven app (**Dependency Atlas Admin**) shows the same rows — change the owner in React, refresh the grid, it's there. *This is the "data and platform" thesis made visible.* | "Same row, two apps, one commit. *That* is data and platform." | Q1, Q3 |
 | **C6** | **The graph** | A list says what you have. A graph — boxes and arrows — says what depends on what. Every arrow here means *A requires B*. Once dependencies are rows pointing at rows, "what breaks?" becomes a computation instead of a memory. | "A table tells you what you have. A graph tells you what hurts." | Q1, Q2 |
 | **C7** ↺ | **The computer walks the graph** | Start at the box that died, follow the arrows backwards, collect everything you reach, stop when you've seen it all. That's the whole simulation. The messy bits — two boxes needing each other, one box reachable two ways — are exactly what humans get wrong at 3 a.m. and computers get right every time. | "You know what Identity API *does*. Nobody can hold fifty arrows in their head. Let the computer walk — the human decides what to do with the answer." | Q2 |
 | **C9** | **Breaks immediately vs breaks because of that** | *Breaks immediately* = uses the dead thing itself. *Breaks because of that* = only breaks because something in between broke. The indirect people are the ones who find out last. | "The thing that breaks is rarely the thing you touched." | Q2 |
@@ -65,7 +88,7 @@ the right way is no longer the expensive way. Each one is empathy for a specific
 
 ## 2. The ten minutes — Vesa asks, Luise shows
 
-Pre-stage: `npm run reset` done · published app open, hard-refreshed, zoomed ~125 % · VS Code on `main`, `npm run dev` already running, Copilot chat open · make.powerapps.com → Tables → Asset data view in a second tab.
+Pre-stage: `npm run reset` done · published app open, hard-refreshed, zoomed ~125 % · VS Code on `main`, `npm run dev` already running, Copilot chat open · **Dependency Atlas Admin** (model-driven app) open on *Active Assets* in a second tab: https://org4caa9250.crm4.dynamics.com/main.aspx?appid=b67a7d91-fbdc-f111-84ea-000d3a489879
 
 Cumulative timings. **Q3 is the one to drop** if you're over.
 
@@ -95,12 +118,19 @@ Zoom gently into the top row (portals, mobile app). Point at a ⚠ *No business 
 
 **Click:** ↺ Clear.
 
-### 4:15 — **Q3 · "Is that real data or a demo file?"** → change an owner (1:00) — C2
+### 4:15 — **Q3 · "Is that real data or a demo file?"** → change an owner, prove it in a second app (1:00) — C2
 
-**Click:** search `Admin Console` → ✎ Change owner → **Grady Archie** → Save. Green: *saved to Dataverse*. ⚠ becomes 👤.
-**Switch tab:** make.powerapps.com → Asset table → Admin Console row → owner is set.
+**Switch tab first:** *Dependency Atlas Admin* (model-driven app), **Active Assets** grid. Point at the **Admin Console** row — Business Owner column is empty.
 
-**Say:** "Dataverse. Same table a canvas app or a model-driven form would use — data and platform, remember. Simulation was a thought experiment; this was a commit. A human just decided who is accountable, and every other app in the tenant now knows. That decision isn't going to be automated. It shouldn't be."
+**Say:** "Before I answer: this is a *second* Power App. Zero code — a model-driven app, generated from the same two tables. Admin Console, no owner."
+
+**Switch back:** React app → search `Admin Console` → ✎ Change owner → **Grady Archie** → Save. Green toast. ⚠ becomes 👤.
+
+**Switch to the model-driven app** → **Refresh** (toolbar). Grady Archie appears in the Admin Console row.
+
+**Say:** "Same Dataverse row, two completely different apps, one commit. *That* is data and platform. The React app is the one I wanted; the model-driven app took ninety seconds and no code. Simulation was a thought experiment; this was a commit — a human just decided who is accountable, and every app in the tenant knows. That decision isn't going to be automated. It shouldn't be."
+
+**Why this beat matters:** it is the only moment the audience *sees* the thesis instead of hearing it. If you drop Q3 for time, at least leave the grid tab open and gesture at it during Q5.
 
 ### 5:15 — **Q4 · "Where's the AI in this — and where's the human?"** → live coding (2:15) — I1, A4
 
@@ -167,15 +197,16 @@ Vesa's theme is that tools help but judgement and people stay. Every exchange la
 | --- | --- | --- |
 | Q1 | Draws the estate | Recognises their own wiki diagram |
 | Q2 | Walks fifty arrows, survives cycles and diamonds | Reads *People to call*, picks up the phone |
-| Q3 | Persists to Dataverse | Decides who is accountable |
+| Q3 | Persists to Dataverse; a second app shows it instantly | Decides who is accountable |
 | Q4 | Ranks unowned systems by blast radius in 90 s | Knows what the answer should look like; decides it matters |
 | Q5 | Resets, labels, governs | Chose to build it that way — for the next person, the back row, the admin |
 
 **The ♥ thread in one breath:** *right thing* is Q1–Q4; *right way* is Q5. Don't let Q5 become the "if there's time" part — it is the part that connects your slot to Vesa's theme. If anything has to go, it's Q3.
 
-**Taglines (max three on stage):**
+**Taglines (pick three):**
 - "A table tells you what you have. A graph tells you what hurts."
 - "Criticality labels lie; graphs don't."
+- "Same row, two apps, one commit."
 - "Build the right thing — and build it the right way. Those used to be two budgets."
 
 **Don't:** drag nodes during a simulation · open `src/generated/` · explain OData, lookups or record ownership · say "visited set" or "BFS" — say *the computer walks the graph*.
@@ -186,7 +217,7 @@ Vesa's theme is that tools help but judgement and people stay. Every exchange la
 | --- | --- | --- |
 | Q1 | load app | 32 assets · 50 dependencies |
 | Q2 | Identity API → Show blast radius | **8 / 1 / 9** · 7 owners + 2 nobody · Shipping API yellow |
-| Q3 | Admin Console → owner Grady Archie → maker portal | green toast · row shows owner |
+| Q3 | MDA grid (empty) → React: Admin Console → Grady Archie → MDA Refresh | green toast · grid row shows Grady Archie |
 | Q4 | paste prompt → Local Play → Ownership gaps | **#1 Maps Provider 7** · #2 Shipping API 6 · #3 ETL Pipeline 4 |
 | Q4 panic | `git checkout rehearsal/ownership-gaps` | same result |
 | Q5 | `npm run reset` | ~20 s · back to 32 / 50 · Admin Console unowned |
