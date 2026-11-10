@@ -1,0 +1,36 @@
+{
+  "version": "1.0",
+  "appId": "23b555ed-86ef-4539-bc1a-976e11974af6",
+  "appDisplayName": "Dependency Atlas",
+  "region": "prod",
+  "appType": "CodeApp",
+  "environmentId": "33ba429d-d577-e7e1-8134-11e72dc99c51",
+  "description": "ESPC26 keynote demo: dependency graph and impact analysis on Dataverse",
+  "buildPath": "./dist",
+  "buildEntryPoint": "index.html",
+  "localAppUrl": "http://localhost:3000",
+  "logoPath": "Default",
+  "connectionReferences": {},
+  "databaseReferences": {
+    "default.cds": {
+      "dataSources": {
+        "assets": {
+          "entitySetName": "espc26_assets",
+          "logicalName": "espc26_asset",
+          "isHidden": false
+        },
+        "dependencies": {
+          "entitySetName": "espc26_dependencies",
+          "logicalName": "espc26_dependency",
+          "isHidden": false
+        },
+        "users": {
+          "entitySetName": "systemusers",
+          "logicalName": "systemuser",
+          "isHidden": false
+        }
+      },
+      "environmentVariableName": ""
+    }
+  }
+}
