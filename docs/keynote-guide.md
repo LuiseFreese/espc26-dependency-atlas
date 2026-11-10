@@ -11,18 +11,51 @@ All numbers are the verified values after `npm run reset`.
 
 ---
 
+## 0. Your thesis — data and platform, not low code and apps
+
+Say a version of this early (Q1). It is the lens for everything that follows.
+
+> When people hear *Power Platform* they think *low code* and they think *apps* — a canvas, a formula bar, a
+> screen somebody drags together on a Friday afternoon. I've never approached it that way. For me it was always
+> **data and platform**. The app is the least interesting part. What matters is that the data lives in one place,
+> with real tables and real relationships and real security — and that the platform brings identity, sharing,
+> governance and lifecycle for free. Get *that* right and the app on top can be anything: a canvas app today, a
+> model-driven form tomorrow, a Copilot agent next year — or, now, my own React.
+>
+> That's why "the future of low code is code" isn't a betrayal of low code. It's the natural end of it. Low code
+> got us the data and the platform. Code apps mean I no longer have to compromise on the thing *on top*.
+
+In plain terms, "data and platform first" means:
+
+- **Model the business, not the screen.** Asset, Dependency, Business Owner are tables with relationships. "What breaks?" is a question about the data, so it is answered from the data — any UI can ask it.
+- **The platform is the runtime, not the designer.** Sign-in, sharing, permissions, environments, solutions — you inherit them; you don't build them. A code app plugs into exactly the same sockets a canvas app does.
+- **The app is replaceable; the data is not.** Dependency Atlas could be deleted tonight and the landscape would still be in Dataverse, ready for the next app.
+
+---
+
 ## 1. What you teach — on stage
 
-Six things. Nothing else gets said on stage. IDs are stable (see backstage list for the rest).
+Eight things, in two groups: five about *what it does*, three ♥ about *how it was built*. Nothing else gets said on stage. IDs are stable (see backstage list for the rest).
 
 | # | Concept | Explain it (newcomer) | Stage line | Where |
 | --- | --- | --- | --- | --- |
 | **C1** | **Code apps** | Power Apps used to mean a browser designer and formulas. A *code app* is a normal React/TypeScript web app, written in VS Code, that Power Apps hosts and runs — same sign-in, same sharing, same data, same app list. | "Same tenant, same login, same governance — but it's *my* React." | Q1 |
+| **C2** | **Dataverse underneath** | Dataverse is the Power Platform's database. The two tables live there; the React app is just one way to look at them. Edit here, it's changed for everyone and every other app. *This is the "data and platform" thesis made visible.* | "Simulation is a thought experiment. Changing the owner is a commit." | Q1, Q3 |
 | **C6** | **The graph** | A list says what you have. A graph — boxes and arrows — says what depends on what. Every arrow here means *A requires B*. Once dependencies are rows pointing at rows, "what breaks?" becomes a computation instead of a memory. | "A table tells you what you have. A graph tells you what hurts." | Q1, Q2 |
 | **C7** ↺ | **The computer walks the graph** | Start at the box that died, follow the arrows backwards, collect everything you reach, stop when you've seen it all. That's the whole simulation. The messy bits — two boxes needing each other, one box reachable two ways — are exactly what humans get wrong at 3 a.m. and computers get right every time. | "You know what Identity API *does*. Nobody can hold fifty arrows in their head. Let the computer walk — the human decides what to do with the answer." | Q2 |
 | **C9** | **Direct vs indirect** | *Direct* = uses the dead thing itself. *Indirect* = only breaks because something in between broke. The indirect people are the ones who find out last. | "The thing that breaks is rarely the thing you touched." | Q2 |
-| **C2** | **Dataverse underneath** | Dataverse is the Power Platform's database. The two tables live there; the React app is just one way to look at them. Edit here, it's changed for everyone and every other app. | "Simulation is a thought experiment. Changing the owner is a commit." | Q3 |
-| **C12–14** ♥ | **Built the right way** | *Idempotent* scripts (run twice, same result, reset in 20 s). *Accessible* states (icons and words, not red/green). *Governed* (an admin enabled code apps for this environment; it sits in a solution; it runs with the user's permissions). | "Build the right thing — and build it the right way. Those used to be two budgets." | Q5 |
+
+### ♥ Built the right way — the part that carries the empathy theme
+
+These three are not "nice to have" at the end. They are the keynote's argument: **we don't only want to build the
+right thing, we want to build it the right way** — and with AI doing the typing and the platform doing the plumbing,
+the right way is no longer the expensive way. Each one is empathy for a specific person who isn't in the room.
+
+| # | Concept | Explain it (newcomer) | Who it's for | Stage line | Where |
+| --- | --- | --- | --- | --- | --- |
+| **C12** ♥ | **Idempotent — run it twice, same result** | The scripts that create the tables and load the demo data check what exists before they create anything, and a *reset* puts everything back exactly as it was — in about 20 seconds, as often as you like. No duplicates, no "it worked on my environment", no half-configured leftovers. It's lifecycle management for schema *and* data, from the first day. | **Whoever comes after you** — the colleague who inherits this, the person who has to rebuild it in another environment, and future-you at the rehearsal tomorrow. | "I can nuke it and be back in twenty seconds. Nobody inherits my mess." | Q5 |
+| **C13** ♥ | **Accessible — words and icons, not red and green** | Every impact state has a label and an icon (⛔ Unavailable, ⚠ Direct impact, ◔ Indirect impact), and the rest of the graph is dimmed. Colour is a bonus, never the only signal. Roughly one in twelve men can't reliably tell red from green — and no projector in any auditorium renders colour the way your monitor does. | **The user you'll never meet** — the one in the room who can't see the difference, and the one in the back row. | "Red/green is not a legend. ⚠ *Direct impact* is. One in twelve people in this room can't see the difference — and neither can that projector." | Q5 |
+| **C14** ♥ | **Governed — the admin kept the keys** | A code app is still a Power App. An administrator has to enable *Power Apps code apps* for the environment before anyone can publish one (we hit that switch building this). It is added to a solution for ALM, shared like any other app, follows DLP, and reads Dataverse with the *user's* permissions — never a backdoor account. Developers got freedom; the organisation lost nothing. | **The admin and the people they protect** — the person who has to say yes to this and sleep at night. | "Admins keep the keys. Developers get a better car." | Q5 |
 
 **One insight (I1):** *Criticality labels lie; graphs don't.* A field someone typed says "low". The structure says seven systems fall over. Risk should be computed, not declared — and then a human decides what to do about it.
 
@@ -40,15 +73,19 @@ Cumulative timings. **Q3 is the one to drop** if you're over.
 
 Vesa: intro, "Luise has been telling everyone the future of low code is code…"
 
-### 0:30 — **Q1 · "So what do you mean by that?"** → the app (1:30) — C1, C6
+### 0:30 — **Q1 · "So what do you mean by that?"** → the app (1:45) — C1, C2, C6
 
 **Show:** the published app. Let it load. Point at *32 assets · 50 dependencies*.
 
-**Say:** "This is a Power App. It's React and TypeScript, written in VS Code, and Power Apps runs it — same login, same sharing button up there, same governance. That's a code app. And this is the *What-Could-Possibly-Go-Wrong Graph*: every box is a system in a web shop, every arrow says *A requires B*. Every company has this diagram on a wiki page. Nobody has it as something you can *ask*."
+**Say (thesis first):** "When people hear Power Platform they think *low code* and they think *apps*. I never did. For me it was always **data and platform**: the data in one place, with real tables and real relationships — and a platform that gives me identity, sharing and governance for free. The app on top is the least interesting part. It can be a canvas app, a model-driven form, an agent — or, now, my own React."
+
+**Say (C1):** "Because this *is* a Power App. React and TypeScript, written in VS Code, and Power Apps runs it — same login, same sharing button up there, same governance. That's a code app. Low code got us the data and the platform. Code apps mean I don't have to compromise on the thing on top anymore."
+
+**Say (C6):** "And this is the *What-Could-Possibly-Go-Wrong Graph*: every box is a system in a web shop, every arrow says *A requires B*. Every company has this diagram on a wiki page. Nobody has it as something you can *ask*."
 
 Zoom gently into the top row (portals, mobile app). Point at a ⚠ *No business owner*. "Hold that thought."
 
-### 2:00 — **Q2 · "Okay — what can I ask it?"** → simulate Identity API (2:00) — C7, C9
+### 2:15 — **Q2 · "Okay — what can I ask it?"** → simulate Identity API (2:00) — C7, C9
 
 **Click:** search `Identity` → Enter → **⛔ Simulate unavailable**. Let it breathe.
 
@@ -58,14 +95,14 @@ Zoom gently into the top row (portals, mobile app). Point at a ⚠ *No business 
 
 **Click:** ↺ Reset simulation.
 
-### 4:00 — **Q3 · "Is that real data or a demo file?"** → change an owner (1:30) — C2
+### 4:15 — **Q3 · "Is that real data or a demo file?"** → change an owner (1:00) — C2
 
 **Click:** search `Admin Console` → ✎ Change owner → **Grady Archie** → Save. Green: *saved to Dataverse*. ⚠ becomes 👤.
 **Switch tab:** make.powerapps.com → Asset table → Admin Console row → owner is set.
 
-**Say:** "Dataverse. Same table a canvas app or a model-driven form would use. Simulation was a thought experiment; this was a commit — a human just decided who is accountable, and every other app in the tenant now knows. That decision isn't going to be automated. It shouldn't be."
+**Say:** "Dataverse. Same table a canvas app or a model-driven form would use — data and platform, remember. Simulation was a thought experiment; this was a commit. A human just decided who is accountable, and every other app in the tenant now knows. That decision isn't going to be automated. It shouldn't be."
 
-### 5:30 — **Q4 · "Where's the AI in this — and where's the human?"** → live coding (2:30) — I1, A4
+### 5:15 — **Q4 · "Where's the AI in this — and where's the human?"** → live coding (2:15) — I1, A4
 
 **Switch:** VS Code, Copilot chat. Paste:
 
@@ -79,14 +116,21 @@ Zoom gently into the top row (portals, mobile app). Point at a ⚠ *No business 
 
 **Fallback:** `git checkout rehearsal/ownership-gaps`, reload. "…and this is why we rehearse."
 
-### 8:00 — **Q5 · "What did it take to get this into a real tenant?"** → built the right way (1:30) — C12, C13, C14
+### 7:30 — **Q5 · "Impressive — but what did it take to put this in a real tenant, properly?"** → ♥ built the right way (2:00) — C12, C13, C14
 
-**Show** three quick things, no clicking around:
-1. Terminal: `npm run reset` — it runs while you talk (~20 s). "Tables, data, back to zero, twice a day if I want. Idempotent. Nobody inherits my mess."
-2. App legend: ⛔ ⚠ ◔ "Icons and words, not red and green. One in twelve men in this room can't tell those apart, and the projector can't either."
-3. Say it, don't show it: "And an admin had to flip a switch — *Power Apps code apps* — for this environment before I could publish. It's in a solution, it runs with *your* permissions on Dataverse. Admins keep the keys. Developers get a better car."
+This is the empathy beat. Slow down. Three things, each for a person who isn't in the room.
 
-**Close:** "Build the right thing — and build it the right way. Those used to be two budgets. With AI doing the typing and the platform doing the plumbing, they're not anymore. That's what empathy looks like in code: for the person on call, for the admin who has to trust it, for whoever inherits it. Go find your Maps Provider."
+**1. Terminal — type `npm run reset` and let it run while you talk (~20 s).**
+"Everything you saw — the tables, the fifty dependencies, the owner I just changed — is going back to zero right now. Then it comes back, identical. I can do this twice a day. The scripts that built this check what's there before they create anything; run them twice, same result. That's not for me. That's for whoever has to set this up in the next environment, or inherits it when I move on. **Nobody inherits my mess.**"
+
+**2. App — point at the legend: ⛔ ⚠ ◔.**
+"Look at what the simulation showed you earlier: not just orange and yellow — *Direct impact*, *Indirect impact*, with icons, and everything else dimmed. Colour is a bonus, never the only signal. One in twelve men in this room can't tell red from green. And that projector can't either. **Red/green is not a legend. ⚠ *Direct impact* is.** It cost me nothing. It just had to be decided."
+
+**3. Say it, don't show it.**
+"And the part you didn't see: before I could publish this, an administrator had to switch on *Power Apps code apps* for the environment. It sits in a solution. It runs with *your* permissions on Dataverse, not some backdoor account. I got all the freedom of React; the organisation gave up nothing. **Admins keep the keys. Developers get a better car.**"
+
+**Close (land it on empathy):**
+"We talk a lot about building the *right* thing. This graph is the right thing — it answers *what breaks*. But I care just as much about building it the *right way*: reproducible, accessible, governed. Those used to be two budgets — you did the second one if there was time left, and there never was. With AI doing the typing and the platform doing the plumbing, there is no excuse anymore. That's what empathy looks like in code. For the person on call at three in the morning. For the one in the back row who can't see red. For the admin who has to say yes and sleep at night. For whoever inherits it. Go find your Maps Provider."
 
 ### 9:30 — Vesa wraps, you sit.
 
@@ -95,13 +139,13 @@ Zoom gently into the top row (portals, mobile app). Point at a ⚠ *No business 
 | Exchange | Teaches | Minutes |
 | --- | --- | --- |
 | Walk-on | — | 0:30 |
-| Q1 What do you mean | C1, C6 | 1:30 |
+| Q1 What do you mean (thesis) | C1, C2, C6 | 1:45 |
 | Q2 What can I ask it | C7, C9 | 2:00 |
-| Q3 Is it real *(drop if over)* | C2 | 1:30 |
-| Q4 AI vs human | I1, A4 | 2:30 |
-| Q5 Into a real tenant | C12–14 | 1:30 |
+| Q3 Is it real *(drop if over)* | C2 | 1:00 |
+| Q4 AI vs human | I1, A4 | 2:15 |
+| Q5 ♥ Built the right way | C12, C13, C14 | 2:00 |
 | Wrap | — | 0:30 |
-| | | **10:00** (8:30 without Q3) |
+| | | **10:00** (9:00 without Q3) |
 
 ### Suggested questions to give Vesa
 
@@ -109,13 +153,13 @@ Zoom gently into the top row (portals, mobile app). Point at a ⚠ *No business 
 2. "Okay — what can I actually ask it?"
 3. "Is that real data or a demo file?"
 4. "Where's the AI in this — and where's the human?"
-5. "What did it take to get this into a real tenant?"
+5. "Impressive — but what did it take to put this in a real tenant, properly?"
 
 ---
 
 ## 3. Storyline
 
-**Arc:** *A graph you can ask → the computer walks, the human decides → it's real → AI ranks, human judges → built with care.*
+**Arc:** *Data and platform, not low code and apps → a graph you can ask → the computer walks, the human decides → it's real → AI ranks, human judges → built with care, for people who aren't in the room.*
 
 Vesa's theme is that tools help but judgement and people stay. Every exchange lands on a person:
 
@@ -125,7 +169,9 @@ Vesa's theme is that tools help but judgement and people stay. Every exchange la
 | Q2 | Walks fifty arrows, survives cycles and diamonds | Reads *owners to notify*, picks up the phone |
 | Q3 | Persists to Dataverse | Decides who is accountable |
 | Q4 | Ranks unowned systems by blast radius in 90 s | Knows what the answer should look like; decides it matters |
-| Q5 | Resets, labels, governs | Chose to build it that way — for the next person |
+| Q5 | Resets, labels, governs | Chose to build it that way — for the next person, the back row, the admin |
+
+**The ♥ thread in one breath:** *right thing* is Q1–Q4; *right way* is Q5. Don't let Q5 become the "if there's time" part — it is the part that connects your slot to Vesa's theme. If anything has to go, it's Q3.
 
 **Taglines (max three on stage):**
 - "A table tells you what you have. A graph tells you what hurts."
