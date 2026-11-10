@@ -63,7 +63,7 @@ Eight things, in two groups: five about *what it does*, three ♥ about *how it 
 | # | Concept | Explain it (newcomer) | Stage line | Where |
 | --- | --- | --- | --- | --- |
 | **C1** | **Code apps** | Power Apps used to mean a browser designer and formulas. A *code app* is a normal React/TypeScript web app, written in VS Code, that Power Apps hosts and runs — same sign-in, same sharing, same data, same app list. | "Same tenant, same login, same governance — but it's *my* React." | Q1 |
-| **C2** | **Dataverse underneath** | Dataverse is the Power Platform's database. The two tables live there; the React app is just one way to look at them. On stage a *second*, zero-code model-driven app (**Dependency Atlas Admin**) shows the same rows — change the owner in React, refresh the grid, it's there. *This is the "data and platform" thesis made visible.* | "Same row, two apps, one commit. *That* is data and platform." | Q1, Q3 |
+| **C2** | **Dataverse underneath** | Dataverse is the Power Platform's database. The two tables live there; the React app is just one way to look at them. On stage a *second*, zero-code model-driven app (**Dependency Atlas Admin**) shows the same rows — change the owner in React, refresh the grid, it's there. *This is the "data and platform" thesis made visible.* | "Same row, same table, two apps. The data doesn't care which one you use." | Q1, Q3 |
 | **C6** | **The graph** | A list says what you have. A graph — boxes and arrows — says what depends on what. Every arrow here means *A requires B*. Once dependencies are rows pointing at rows, "what breaks?" becomes a computation instead of a memory. | "A table tells you what you have. A graph tells you what hurts." | Q1, Q2 |
 | **C7** ↺ | **The computer walks the graph** | Start at the box that died, follow the arrows backwards, collect everything you reach, stop when you've seen it all. That's the whole simulation. The messy bits — two systems needing each other, one system reachable two ways — are exactly what people get wrong under pressure and computers get right every time. | "Every team knows what *their* system needs. Nobody knows the whole chain. That's a memory problem — and computers don't have it. The app follows the chain; the people decide what to do." | Q2 |
 | **C9** | **Breaks immediately vs breaks because of that** | *Breaks immediately* = uses the dead thing itself. *Breaks because of that* = only breaks because something in between broke. The indirect people are the ones who find out last. | "The thing that breaks is rarely the thing you touched." | Q2 |
@@ -122,17 +122,21 @@ Zoom gently into the top row (portals, mobile app). Point at a ⚠ *No business 
 
 **Click:** ↺ Clear.
 
-### 4:15 — **Q3 · "Is that real data or a demo file?"** → change an owner, prove it in a second app (1:00) — C2
+### 4:15 — **Q3 · "Is that real data or a demo file?"** → update a row, see it in a second app (1:00) — C2
 
-**Switch tab first:** *Dependency Atlas Admin* (model-driven app), **Active Assets** grid. Point at the **Admin Console** row — Business Owner column is empty.
+**Say:** "Real data. It's two Dataverse tables — Assets and Dependencies. Let me show you with a second app."
 
-**Say:** "Before I answer: this is a *second* Power App. Zero code — a model-driven app, generated from the same two tables. Admin Console, no owner."
+**Switch tab:** *Dependency Atlas Admin* — a model-driven app, **Active Assets** grid. Point at **Admin Console**: Business Owner column is empty.
 
-**Switch back:** React app → search `Admin Console` → ✎ Change owner → **Grady Archie** → Save. Green toast. ⚠ becomes 👤.
+**Say:** "This is a standard model-driven Power App on the same two tables. No code, took a couple of minutes. Admin Console — no business owner."
 
-**Switch to the model-driven app** → **Refresh** (toolbar). Grady Archie appears in the Admin Console row.
+**Switch back:** React app → search `Admin Console` → ✎ Change owner → **Grady Archie** → Save. Green message. ⚠ becomes 👤.
 
-**Say:** "Same Dataverse row, two completely different apps, one commit. *That* is data and platform. The React app is the one I wanted; the model-driven app took ninety seconds and no code. Simulation was a thought experiment; this was a commit — a human just decided who is accountable, and every app in the tenant knows. That decision isn't going to be automated. It shouldn't be."
+**Say:** "I just set the Business Owner field on that row. That's an update to Dataverse, through the service the CLI generated for me."
+
+**Switch to the model-driven app** → **Refresh**. Grady Archie appears in the Admin Console row.
+
+**Say:** "Same row, same table, two apps. The React one is the one I *wanted* to build. The model-driven one is what the platform gives me for free. The data doesn't care which one you use. That's what I mean by data and platform."
 
 **Why this beat matters:** it is the only moment the audience *sees* the thesis instead of hearing it. If you drop Q3 for time, at least leave the grid tab open and gesture at it during Q5.
 
@@ -201,7 +205,7 @@ Vesa's theme is that tools help but judgement and people stay. Every exchange la
 | --- | --- | --- |
 | Q1 | Draws the estate | Recognises their own wiki diagram |
 | Q2 | Follows the whole dependency chain, end to end | Reads *People to call*, picks up the phone |
-| Q3 | Persists to Dataverse; a second app shows it instantly | Decides who is accountable |
+| Q3 | Updates a Dataverse row; a second app shows it | Picks the owner |
 | Q4 | Ranks unowned systems by blast radius in 90 s | Knows what the answer should look like; decides it matters |
 | Q5 | Resets, labels, governs | Chose to build it that way — for the next person, the back row, the admin |
 
@@ -210,7 +214,7 @@ Vesa's theme is that tools help but judgement and people stay. Every exchange la
 **Taglines (pick three):**
 - "A table tells you what you have. A graph tells you what hurts."
 - "Criticality labels lie; graphs don't."
-- "Same row, two apps, one commit."
+- "Same row, same table, two apps."
 - "Build the right thing — and build it the right way. Those used to be two budgets."
 
 **Don't:** drag nodes during a simulation · open `src/generated/` · explain OData, lookups or record ownership · say "visited set" or "BFS" — say *the computer walks the graph*.
@@ -221,7 +225,7 @@ Vesa's theme is that tools help but judgement and people stay. Every exchange la
 | --- | --- | --- |
 | Q1 | load app | 32 assets · 50 dependencies |
 | Q2 | Identity API → Show blast radius | **8 / 1 / 9** · 6 owners + 2 nobody · Shipping API yellow |
-| Q3 | MDA grid (empty) → React: Admin Console → Grady Archie → MDA Refresh | green toast · grid row shows Grady Archie |
+| Q3 | MDA grid (empty) → React: Admin Console → Grady Archie → MDA Refresh | green message · grid row shows Grady Archie |
 | Q4 | paste prompt → Local Play → Ownership gaps | **#1 Maps Provider 7** · #2 Shipping API 6 · #3 ETL Pipeline 4 |
 | Q4 panic | `git checkout rehearsal/ownership-gaps` | same result |
 | Q5 | `npm run reset` | ~20 s · back to 32 / 50 · Admin Console unowned |
@@ -238,7 +242,7 @@ Kept with stable IDs so earlier notes still resolve.
 | C4 | Lookups are relationships | Business Owner and the two asset references are foreign keys to real rows, set via `@odata.bind`. |
 | C5 | Business ownership ≠ record ownership | Dataverse `ownerid` is about permissions; our Business Owner lookup is about accountability; tables are org-owned so they don't collide. |
 | C8 | Direction matters | Arrows mean *requires*; outages flow against them. (Implicit in C7.) |
-| C10 | What-if vs persisted | Simulation is browser state only; owner/dependency edits are real writes. (Said in one line in Q3.) |
+| C10 | What-if vs persisted | Simulation is browser state only; owner/dependency edits are real Dataverse updates. |
 | C11 | You own the UX now | Canvas apps made layout decisions for you; here the layout is computed once and never reshuffles — a moving picture destroys trust. |
 | I2 | Shared services are quiet SPOFs | Dependents accumulate one integration at a time; nobody sees the aggregate until it's down. |
 | I3 | Cycles exist | Legacy CRM ⇄ CRM Sync Job; anything assuming a tree loops or crashes. |
