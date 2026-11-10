@@ -4,6 +4,9 @@
 graph" of an IT estate: pick a system, press **Show blast radius**, see what else breaks and who to call.
 Plus a zero-code model-driven app on the same tables. Most of it was built with an AI assistant — that's the point of Q4.
 
+![Identity API blast radius](img/blast-radius.png)
+![Same row in the model-driven app](img/model-driven-grid.png)
+
 **Please don't pre-empt my line** ("the future of low code is code") — I deliver it in Q1.
 
 | | You ask | I show | I say |
