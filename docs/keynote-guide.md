@@ -19,6 +19,8 @@ All numbers are the verified values after `npm run reset`.
 > *Show blast radius*, and you see exactly what stops working, how far the damage spreads, and who you need to
 > call.
 
+![The full dependency graph — 32 systems, 50 dependencies](img/full-dependency-graph.png)
+
 The problem it solves: every organisation has an architecture diagram on a wiki that nobody trusts and nobody
 can query. Dependency knowledge lives in people's heads and surfaces during the incident, not before. Dependency
 Atlas keeps it as *data* — in Dataverse, with real relationships — so the question can be asked by anyone, any
@@ -114,6 +116,8 @@ Zoom gently into the top row (portals, mobile app). Point at a ⚠ *No business 
 
 **Click:** search `Identity` → Enter → **💥 Show blast radius**. Let it breathe for two seconds.
 
+![Identity API down: 8 break immediately, 1 more because of that, people to call](img/blast-radius.png)
+
 **Say (what they see):** "**Eight systems break immediately** — the customer portal, the mobile app, the partner portal, checkout, orders… all of them log people in through Identity. **One more breaks a step later: Shipping.** Shipping has nothing to do with login. But Shipping needs Inventory, and Inventory needs Identity. So Shipping is down too — and the Shipping team is the last to find out. **Nine systems, from one failure.**"
 
 **Say (why a computer — C7):** "Every team knows what *their* system needs. Nobody knows the whole chain — three, four hops deep, across teams. That's not a knowledge problem, it's a *memory* problem, and computers don't have it. The app follows the chain end to end, every time, in a blink."
@@ -135,6 +139,8 @@ Zoom gently into the top row (portals, mobile app). Point at a ⚠ *No business 
 **Say:** "I just set the Business Owner field on that row. That's an update to Dataverse, through the service the CLI generated for me."
 
 **Switch to the model-driven app** → **Refresh**. Grady Archie appears in the Admin Console row.
+
+![The same rows in a zero-code model-driven app](img/model-driven-grid.png)
 
 **Say:** "Same row, same table, two apps. The React one is the one I *wanted* to build. The model-driven one is what the platform gives me for free. The data doesn't care which one you use. That's what I mean by data and platform."
 
