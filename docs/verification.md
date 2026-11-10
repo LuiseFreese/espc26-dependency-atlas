@@ -47,9 +47,9 @@ Tooling verified against installed versions: Power Apps CLI `pa` 1.4.1 (`@micros
 | Loading / error / empty states | ✅ loading state observed; error & empty states implemented (`StateViews.tsx`), not triggered on stage data |
 | Fit to view keeps the graph clear of toolbar/legend | ✅ (after fixing controlled-node `measured` + px padding) |
 | Search → pick → centre + side panel | ✅ |
-| Simulate **Identity API**: 8 direct, 1 indirect (Shipping API), 9 affected, 7 owners + 2 unowned, 22 dimmed | ✅ matches hand count; diamond (Customer Portal) counted once |
-| Simulate **Customer Database**: 4 direct, 12 indirect incl. Legacy CRM via cycle, 16 affected; HR cluster + Intranet Wiki unaffected | ✅ |
-| Reset simulation | ✅ |
+| Show blast radius of **Identity API**: 8 direct, 1 indirect (Shipping API), 9 affected, 7 owners + 2 unowned, 22 dimmed | ✅ matches hand count; diamond (Customer Portal) counted once |
+| Show blast radius of **Customer Database**: 4 direct, 12 indirect incl. Legacy CRM via cycle, 16 affected; HR cluster + Intranet Wiki unaffected | ✅ |
+| Clear blast radius (reset simulation) | ✅ |
 | Change owner (Admin Console → Grady Archie) saved through `Espc26_assetsService.update` | ✅ UI updated after confirmation; verified via Web API |
 | Add dependency (Admin Console → Feature Flag Service) via `Espc26_dependenciesService.create` with `@odata.bind` | ✅ edge appeared, count 51; verified via Web API |
 | Duplicate dependency rejected ("already requires") | ✅ |

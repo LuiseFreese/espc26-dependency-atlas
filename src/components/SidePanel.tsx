@@ -101,28 +101,31 @@ export function SidePanel(props: SidePanelProps) {
       {asset.description && <p className="description">{asset.description}</p>}
 
       <section className={`section ${impact ? "impact" : ""}`}>
-        <h3>Impact simulation</h3>
+        <h3>Blast radius</h3>
         {isSimulatedSource && summary ? (
           <>
+            <p className="empty-hint">
+              If <strong>{asset.name}</strong> goes down, this is what stops working. Nothing is actually touched — it's a what-if.
+            </p>
             <div className="stats">
               <div className="stat direct">
                 <div className="value">{summary.directCount}</div>
                 <div className="label">
-                  <span aria-hidden="true">{IMPACT_LABEL.direct.icon}</span> direct
+                  <span aria-hidden="true">{IMPACT_LABEL.direct.icon}</span> break immediately
                 </div>
               </div>
               <div className="stat indirect">
                 <div className="value">{summary.indirectCount}</div>
                 <div className="label">
-                  <span aria-hidden="true">{IMPACT_LABEL.indirect.icon}</span> indirect
+                  <span aria-hidden="true">{IMPACT_LABEL.indirect.icon}</span> break because of that
                 </div>
               </div>
               <div className="stat total">
                 <div className="value">{summary.affectedCount}</div>
-                <div className="label">affected total</div>
+                <div className="label">systems affected</div>
               </div>
             </div>
-            <h3>Owners to notify</h3>
+            <h3>People to call</h3>
             {summary.owners.length === 0 && summary.unownedAffectedCount === 0 ? (
               <p className="empty-hint">Nothing depends on this asset.</p>
             ) : (
@@ -148,23 +151,27 @@ export function SidePanel(props: SidePanelProps) {
               </ul>
             )}
             <div className="actions">
-              <button onClick={onResetSimulation}>↺ Reset simulation</button>
+              <button onClick={onResetSimulation}>↺ Clear</button>
             </div>
           </>
         ) : (
           <>
             <p className="empty-hint">
               {impact
-                ? `Showing the outage of ${assetsById.get(impact.sourceId)?.name ?? "another asset"}. This asset is ${
-                    impact.direct.has(asset.id) ? "directly" : impact.indirect.has(asset.id) ? "indirectly" : "not"
-                  } affected.`
-                : "What breaks if this asset goes down? Nothing is persisted — this is a local what-if."}
+                ? `${assetsById.get(impact.sourceId)?.name ?? "Another system"} is down in this what-if. ${asset.name} ${
+                    impact.direct.has(asset.id)
+                      ? "breaks immediately."
+                      : impact.indirect.has(asset.id)
+                        ? "breaks because something it needs breaks."
+                        : "keeps running."
+                  }`
+                : "Pretend this system just went down and see everything that stops working because of it. Nothing is actually touched."}
             </p>
             <div className="actions">
               <button className="primary" onClick={() => onSimulate(asset.id)}>
-                ⛔ Simulate unavailable
+                💥 Show blast radius
               </button>
-              {impact && <button onClick={onResetSimulation}>↺ Reset simulation</button>}
+              {impact && <button onClick={onResetSimulation}>↺ Clear</button>}
             </div>
           </>
         )}

@@ -87,7 +87,7 @@ export function Toolbar(props: ToolbarProps) {
       <div className="toolbar-actions">
         {simulating && (
           <button className="danger" onClick={onResetSimulation}>
-            ↺ Reset simulation
+            ↺ Clear blast radius
           </button>
         )}
         <button onClick={onFit} title="Fit graph to view">

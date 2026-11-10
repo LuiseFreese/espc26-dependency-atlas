@@ -429,6 +429,10 @@ select option {
 .badge.impact {
   margin-left: auto;
   border-width: 1.5px;
+  white-space: normal;
+  text-align: right;
+  line-height: 1.15;
+  max-width: 150px;
 }
 .badge.impact.unavailable {
   color: #fff;

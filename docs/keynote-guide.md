@@ -43,7 +43,7 @@ Eight things, in two groups: five about *what it does*, three ♥ about *how it 
 | **C2** | **Dataverse underneath** | Dataverse is the Power Platform's database. The two tables live there; the React app is just one way to look at them. Edit here, it's changed for everyone and every other app. *This is the "data and platform" thesis made visible.* | "Simulation is a thought experiment. Changing the owner is a commit." | Q1, Q3 |
 | **C6** | **The graph** | A list says what you have. A graph — boxes and arrows — says what depends on what. Every arrow here means *A requires B*. Once dependencies are rows pointing at rows, "what breaks?" becomes a computation instead of a memory. | "A table tells you what you have. A graph tells you what hurts." | Q1, Q2 |
 | **C7** ↺ | **The computer walks the graph** | Start at the box that died, follow the arrows backwards, collect everything you reach, stop when you've seen it all. That's the whole simulation. The messy bits — two boxes needing each other, one box reachable two ways — are exactly what humans get wrong at 3 a.m. and computers get right every time. | "You know what Identity API *does*. Nobody can hold fifty arrows in their head. Let the computer walk — the human decides what to do with the answer." | Q2 |
-| **C9** | **Direct vs indirect** | *Direct* = uses the dead thing itself. *Indirect* = only breaks because something in between broke. The indirect people are the ones who find out last. | "The thing that breaks is rarely the thing you touched." | Q2 |
+| **C9** | **Breaks immediately vs breaks because of that** | *Breaks immediately* = uses the dead thing itself. *Breaks because of that* = only breaks because something in between broke. The indirect people are the ones who find out last. | "The thing that breaks is rarely the thing you touched." | Q2 |
 
 ### ♥ Built the right way — the part that carries the empathy theme
 
@@ -54,7 +54,7 @@ the right way is no longer the expensive way. Each one is empathy for a specific
 | # | Concept | Explain it (newcomer) | Who it's for | Stage line | Where |
 | --- | --- | --- | --- | --- | --- |
 | **C12** ♥ | **Idempotent — run it twice, same result** | The scripts that create the tables and load the demo data check what exists before they create anything, and a *reset* puts everything back exactly as it was — in about 20 seconds, as often as you like. No duplicates, no "it worked on my environment", no half-configured leftovers. It's lifecycle management for schema *and* data, from the first day. | **Whoever comes after you** — the colleague who inherits this, the person who has to rebuild it in another environment, and future-you at the rehearsal tomorrow. | "I can nuke it and be back in twenty seconds. Nobody inherits my mess." | Q5 |
-| **C13** ♥ | **Accessible — words and icons, not red and green** | Every impact state has a label and an icon (⛔ Unavailable, ⚠ Direct impact, ◔ Indirect impact), and the rest of the graph is dimmed. Colour is a bonus, never the only signal. Roughly one in twelve men can't reliably tell red from green — and no projector in any auditorium renders colour the way your monitor does. | **The user you'll never meet** — the one in the room who can't see the difference, and the one in the back row. | "Red/green is not a legend. ⚠ *Direct impact* is. One in twelve people in this room can't see the difference — and neither can that projector." | Q5 |
+| **C13** ♥ | **Accessible — words and icons, not red and green** | Every impact state has a label and an icon (💥 Down, ⚠ Breaks immediately, ◔ Breaks because of that), and the rest of the graph is dimmed. Colour is a bonus, never the only signal. Roughly one in twelve men can't reliably tell red from green — and no projector in any auditorium renders colour the way your monitor does. | **The user you'll never meet** — the one in the room who can't see the difference, and the one in the back row. | "Red/green is not a legend. ⚠ *Breaks immediately* is. One in twelve people in this room can't see the difference — and neither can that projector." | Q5 |
 | **C14** ♥ | **Governed — the admin kept the keys** | A code app is still a Power App. An administrator has to enable *Power Apps code apps* for the environment before anyone can publish one (we hit that switch building this). It is added to a solution for ALM, shared like any other app, follows DLP, and reads Dataverse with the *user's* permissions — never a backdoor account. Developers got freedom; the organisation lost nothing. | **The admin and the people they protect** — the person who has to say yes to this and sleep at night. | "Admins keep the keys. Developers get a better car." | Q5 |
 
 **One insight (I1):** *Criticality labels lie; graphs don't.* A field someone typed says "low". The structure says seven systems fall over. Risk should be computed, not declared — and then a human decides what to do about it.
@@ -85,15 +85,15 @@ Vesa: intro, "Luise has been telling everyone the future of low code is code…"
 
 Zoom gently into the top row (portals, mobile app). Point at a ⚠ *No business owner*. "Hold that thought."
 
-### 2:15 — **Q2 · "Okay — what can I ask it?"** → simulate Identity API (2:00) — C7, C9
+### 2:15 — **Q2 · "Okay — what can I ask it?"** → blast radius of Identity API (2:00) — C7, C9
 
-**Click:** search `Identity` → Enter → **⛔ Simulate unavailable**. Let it breathe.
+**Click:** search `Identity` → Enter → **💥 Show blast radius**. Let it breathe.
 
-**Say:** "What breaks if single sign-on goes down. **Eight directly. One more indirectly. Nine systems.** Look at Shipping, the yellow one — Shipping doesn't even talk to Identity. It needs Inventory, Inventory needs Identity. Those are the people who find out last."
+**Say:** "**Show blast radius** — pretend single sign-on just died, show me what stops working. **Eight break immediately. One more breaks because of that. Nine systems.** Look at Shipping, the yellow one — Shipping doesn't even talk to Identity. It needs Inventory, Inventory needs Identity. Those are the people who find out last."
 
-**Say (C7):** "You know what Identity API does. Nobody can hold fifty arrows in their head — especially not at three in the morning. The computer walks the graph: backwards along the arrows, collects what it reaches, stops when it's seen everything. It even survives the ugly parts — two systems that need each other, one system reachable two ways. That's its job. *Ours* is this list —" point at **Owners to notify** — "seven people to call. And two systems where the answer is *nobody*."
+**Say (C7):** "You know what Identity API does. Nobody can hold fifty arrows in their head — especially not at three in the morning. The computer walks the graph: backwards along the arrows, collects what it reaches, stops when it's seen everything. It even survives the ugly parts — two systems that need each other, one system reachable two ways. That's its job. *Ours* is this list —" point at **People to call** — "seven people to call. And two systems where the answer is *nobody*."
 
-**Click:** ↺ Reset simulation.
+**Click:** ↺ Clear.
 
 ### 4:15 — **Q3 · "Is that real data or a demo file?"** → change an owner (1:00) — C2
 
@@ -123,8 +123,8 @@ This is the empathy beat. Slow down. Three things, each for a person who isn't i
 **1. Terminal — type `npm run reset` and let it run while you talk (~20 s).**
 "Everything you saw — the tables, the fifty dependencies, the owner I just changed — is going back to zero right now. Then it comes back, identical. I can do this twice a day. The scripts that built this check what's there before they create anything; run them twice, same result. That's not for me. That's for whoever has to set this up in the next environment, or inherits it when I move on. **Nobody inherits my mess.**"
 
-**2. App — point at the legend: ⛔ ⚠ ◔.**
-"Look at what the simulation showed you earlier: not just orange and yellow — *Direct impact*, *Indirect impact*, with icons, and everything else dimmed. Colour is a bonus, never the only signal. One in twelve men in this room can't tell red from green. And that projector can't either. **Red/green is not a legend. ⚠ *Direct impact* is.** It cost me nothing. It just had to be decided."
+**2. App — point at the legend: 💥 ⚠ ◔.**
+"Look at what the simulation showed you earlier: not just orange and yellow — *Breaks immediately*, *Breaks because of that*, with icons, and everything else dimmed. Colour is a bonus, never the only signal. One in twelve men in this room can't tell red from green. And that projector can't either. **Red/green is not a legend. ⚠ *Breaks immediately* is.** It cost me nothing. It just had to be decided."
 
 **3. Say it, don't show it.**
 "And the part you didn't see: before I could publish this, an administrator had to switch on *Power Apps code apps* for the environment. It sits in a solution. It runs with *your* permissions on Dataverse, not some backdoor account. I got all the freedom of React; the organisation gave up nothing. **Admins keep the keys. Developers get a better car.**"
@@ -166,7 +166,7 @@ Vesa's theme is that tools help but judgement and people stay. Every exchange la
 | Exchange | The tool does | The human does |
 | --- | --- | --- |
 | Q1 | Draws the estate | Recognises their own wiki diagram |
-| Q2 | Walks fifty arrows, survives cycles and diamonds | Reads *owners to notify*, picks up the phone |
+| Q2 | Walks fifty arrows, survives cycles and diamonds | Reads *People to call*, picks up the phone |
 | Q3 | Persists to Dataverse | Decides who is accountable |
 | Q4 | Ranks unowned systems by blast radius in 90 s | Knows what the answer should look like; decides it matters |
 | Q5 | Resets, labels, governs | Chose to build it that way — for the next person, the back row, the admin |
@@ -185,7 +185,7 @@ Vesa's theme is that tools help but judgement and people stay. Every exchange la
 | Q | Action | Expected |
 | --- | --- | --- |
 | Q1 | load app | 32 assets · 50 dependencies |
-| Q2 | Identity API → Simulate | **8 / 1 / 9** · 7 owners + 2 nobody · Shipping API yellow |
+| Q2 | Identity API → Show blast radius | **8 / 1 / 9** · 7 owners + 2 nobody · Shipping API yellow |
 | Q3 | Admin Console → owner Grady Archie → maker portal | green toast · row shows owner |
 | Q4 | paste prompt → Local Play → Ownership gaps | **#1 Maps Provider 7** · #2 Shipping API 6 · #3 ETL Pipeline 4 |
 | Q4 panic | `git checkout rehearsal/ownership-gaps` | same result |

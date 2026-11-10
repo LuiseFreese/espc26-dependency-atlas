@@ -18,7 +18,7 @@ export function Legend({ simulating }: { simulating: boolean }) {
       </span>
       {simulating ? (
         <>
-          <h3>Impact</h3>
+          <h3>Blast radius</h3>
           <div className="legend-item">
             <span className="legend-swatch unavailable" /> {IMPACT_LABEL.unavailable.icon} {IMPACT_LABEL.unavailable.text}
           </div>
@@ -29,7 +29,7 @@ export function Legend({ simulating }: { simulating: boolean }) {
             <span className="legend-swatch indirect" /> {IMPACT_LABEL.indirect.icon} {IMPACT_LABEL.indirect.text}
           </div>
           <div className="legend-item">
-            <span className="legend-swatch unaffected" /> Unaffected (dimmed)
+            <span className="legend-swatch unaffected" /> {IMPACT_LABEL.unaffected.text} (dimmed)
           </div>
         </>
       ) : (

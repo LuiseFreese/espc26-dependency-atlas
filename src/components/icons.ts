@@ -8,8 +8,8 @@ export const TYPE_ICON: Record<AssetType, string> = {
 };
 
 export const IMPACT_LABEL: Record<ImpactState, { icon: string; text: string }> = {
-  unavailable: { icon: "⛔", text: "Unavailable" },
-  direct: { icon: "⚠", text: "Direct impact" },
-  indirect: { icon: "◔", text: "Indirect impact" },
-  unaffected: { icon: "·", text: "Unaffected" },
+  unavailable: { icon: "💥", text: "Down" },
+  direct: { icon: "⚠", text: "Breaks immediately" },
+  indirect: { icon: "◔", text: "Breaks because of that" },
+  unaffected: { icon: "·", text: "Keeps running" },
 };

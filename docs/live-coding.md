@@ -46,7 +46,7 @@ centres that asset on the graph.
 
 - The traversal is **reused**, not re-implemented — the ranking inherits cycle safety and diamond de-duplication for free.
 - A low-criticality external **Maps Provider** nobody owns is the biggest ownership risk — criticality labels lie, graphs don't.
-- Click the top row → select → "Simulate unavailable" to show the same number as a blast radius on the canvas.
+- Click the top row → select → "Show blast radius" to show the same number as a blast radius on the canvas.
 - Close the loop live: "Change owner" on Maps Provider → saved to Dataverse → it drops out of the list.
 
 ## Rehearsal checklist
