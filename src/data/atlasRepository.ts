@@ -35,8 +35,14 @@ export class DataverseError extends Error {
 
 function unwrap<T>(result: IOperationResult<T>, what: string): T {
   if (!result.success) {
-    const detail = result.error?.message ?? "Unknown error";
-    throw new DataverseError(`${what} failed: ${detail}`, result.error);
+    const raw = result.error?.message ?? "Unknown error";
+    // The record was deleted/re-created since this page loaded (e.g. after `npm run reset`).
+    if (/Does Not Exist|0x80040217/i.test(raw)) {
+      throw new DataverseError(`${what} failed: this record no longer exists in Dataverse. The data was reset — press Reload.`, result.error);
+    }
+    // Dataverse errors arrive as a JSON blob; surface only the human-readable message.
+    const m = /"message"\s*:\s*"([^"]+)"/.exec(raw);
+    throw new DataverseError(`${what} failed: ${m ? m[1] : raw}`, result.error);
   }
   return result.data;
 }
